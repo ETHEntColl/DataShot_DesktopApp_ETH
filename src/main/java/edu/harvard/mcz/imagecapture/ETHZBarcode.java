@@ -1,7 +1,7 @@
 /**
- * Barcode.java
+ * ETHZBarcode.java
  * edu.harvard.mcz.imagecapture
- * Copyright © 2009 President and Fellows of Harvard College
+ * Copyright © 2016 President and Fellows of Harvard College
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of Version 2 of the GNU General Public License
@@ -21,30 +21,21 @@ package edu.harvard.mcz.imagecapture;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import edu.harvard.mcz.imagecapture.interfaces.BarcodeBuilder;
 import edu.harvard.mcz.imagecapture.interfaces.BarcodeMatcher;
 
-/** Recognition and construction of text strings found in MCZ-ENT barcode labels.  This class deals with the text
- * of the decoded barcode, which is expected be in the form MCZ-ENT[0-9]{8}.  This class doesn't decode or encode 
+/** Recognition and construction of text strings found in ETHZ-ENT barcode labels.  This class deals with the text
+ * of the decoded barcode, which is expected be in the form ETHZ-ENT[0-9]{7}.  This class doesn't decode or encode 
  * the text into a QRCode barcode, that is done with calls to the ZXing library.  
  * 
  * @author Paul J. Morris
  *
  */
-public class MCZENTBarcode implements BarcodeMatcher, BarcodeBuilder {
+public class ETHZBarcode implements BarcodeMatcher, BarcodeBuilder {
 	
-	public static final String PATTERN = "MCZ-ENT[0-9]{8}";
-	public static final String PREFIX = "MCZ-ENT";
-	public static final int DIGITS = 8;
-	
-	private static final Log log = LogFactory.getLog(MCZENTBarcode.class); 
-	
-	public MCZENTBarcode() { 
-		log.debug("Instatntiating " + this.getClass().toString());
-	}
+	public static final String PATTERN = "ETHZ-ENT[0-9]{7}";
+	public static final String PREFIX = "ETHZ-ENT";
+	public static final int DIGITS = 7;
 	
 	/* (non-Javadoc)
 	 * @see edu.harvard.mcz.imagecapture.BarcodeBuilder#getNumber(java.lang.String)
@@ -52,7 +43,7 @@ public class MCZENTBarcode implements BarcodeMatcher, BarcodeBuilder {
 	public Integer extractNumber(String aBarcode) {
 		Integer result = null;
 		if (matchesPattern(aBarcode)) { 
-			result = Integer.valueOf(aBarcode.substring(aBarcode.length()-8,aBarcode.length()));
+			result = Integer.valueOf(aBarcode.substring(aBarcode.length()-DIGITS,aBarcode.length()));
 		}
 		return result;
 	}

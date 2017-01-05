@@ -1,0 +1,5 @@
+/target
+/not_vcs
+/build
+.settings
+TempBarcodeCrop.png
