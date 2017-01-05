@@ -2,7 +2,8 @@
 <project default="create_run_jar" name="Create Runnable Jar for Project butterflies_sf">
 	<property name="bin.root" value="target"/>
 	<property name="dist.root" value="build"/>
-	<property name="m2.root" value="/home/mole/.m2/"/>
+	<!--property name="m2.root" value="/home/mole/.m2/"/-->
+	<property name="m2.root" value="/Users/altheaparker/.m2/"/>
     <!--ANT 1.7 is required -->
     <target name="clean">
 		<delete file="${dist.root}/CandidateImageFile.jar"/>
@@ -29,8 +30,8 @@
             <fileset file="gpl-2.0.txt" />
             <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/commons-cli/commons-cli/1.2/commons-cli-1.2.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/org/imgscalr/imgscalr-lib/4.2/imgscalr-lib-4.2.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/org/apache/commons/commons-csv/1.1/commons-csv-1.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/com/drewnoakes/metadata-extractor/2.8.1/metadata-extractor-2.8.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/org/apache/commons/commons-csv/1.4/commons-csv-1.4.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/com/drewnoakes/metadata-extractor/2.9.1/metadata-extractor-2.9.1.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/com/adobe/xmp/xmpcore/5.1.2/xmpcore-5.1.2.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/com/google/zxing/core/2.3.0/core-2.3.0.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/com/google/zxing/javase/2.3.0/javase-2.3.0.jar"/>
@@ -42,7 +43,9 @@
             <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/org/slf4j/jcl-over-slf4j/1.5.6/jcl-over-slf4j-1.5.6.jar"/>
             <fileset file="${m2.root}/repository/com/google/zxing/core/2.3.0/core-2.3.0-sources.jar" />
             <fileset file="${m2.root}/repository/com/google/zxing/javase/2.3.0/javase-2.3.0-sources.jar"/>
-            <fileset file="${m2.root}/repository/com/drewnoakes/metadata-extractor/2.4.0-beta-1/metadata-extractor-2.4.0-beta-1-sources.jar"/>
+            <!--fileset file="${m2.root}/repository/com/drewnoakes/metadata-extractor/2.4.0-beta-1/metadata-extractor-2.4.0-beta-1-sources.jar"/-->
+        	<fileset file="${m2.root}/repository/com/drewnoakes/metadata-extractor/2.9.1/metadata-extractor-2.9.1.jar"/>
+        	
         </jar>
     </target>
 </project>
