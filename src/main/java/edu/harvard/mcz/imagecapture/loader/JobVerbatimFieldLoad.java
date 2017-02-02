@@ -27,6 +27,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,9 @@ import edu.harvard.mcz.imagecapture.jobs.RunnableJobErrorTableModel;
 import edu.harvard.mcz.imagecapture.ImageCaptureProperties;
 import edu.harvard.mcz.imagecapture.RunnableJobReportDialog;
 import edu.harvard.mcz.imagecapture.Singleton;
+import edu.harvard.mcz.imagecapture.data.MetadataRetriever;
+import edu.harvard.mcz.imagecapture.data.Specimen;
+import edu.harvard.mcz.imagecapture.data.WorkFlowStatus;
 import edu.harvard.mcz.imagecapture.interfaces.RunStatus;
 import edu.harvard.mcz.imagecapture.interfaces.RunnableJob;
 import edu.harvard.mcz.imagecapture.interfaces.RunnerListener;
@@ -140,7 +144,8 @@ public class JobVerbatimFieldLoad  implements RunnableJob, Runnable {
 
 						FieldLoader fl = new FieldLoader();
 
-						if (headerList.size()==3 && headerList.contains("verbatimUnclassifiedText") && headerList.contains("questions")) { 
+						if (headerList.size()==3 && headerList.contains("verbatimUnclassifiedText") 
+								&& headerList.contains("questions") && headerList.contains("barcode")) { 
 							// Allowed case 1: unclassified text only
 
 							String barcode = "";
@@ -154,7 +159,7 @@ public class JobVerbatimFieldLoad  implements RunnableJob, Runnable {
 									barcode = record.get("barcode");
 									String questions = record.get("questions");
 
-									fl.load(barcode, verbatimUnclassifiedText, questions);
+									fl.load(barcode, verbatimUnclassifiedText, questions, true);
 									counter.incrementSpecimensUpdated();
 								} catch (IllegalArgumentException e) {
 									RunnableJobError error =  new RunnableJobError(file.getName(), 
@@ -171,10 +176,12 @@ public class JobVerbatimFieldLoad  implements RunnableJob, Runnable {
 								}
 							}
 							
-						//} else if (headerList.size()==8) {
-							// TODO: Add fields, remove the next line, uncomment the line above.
-						} else if (headerList.size()==4) { 
-							// allowed case two, transcription into verbatim fields
+						} else if (headerList.size()==8 
+								 && headerList.contains("verbatimUnclassifiedText") && headerList.contains("questions") && headerList.contains("barcode")
+							     && headerList.contains("verbatimLocality") && headerList.contains("verbatimDate") && headerList.contains("verbatimNumbers")
+							     && headerList.contains("verbatimCollector") && headerList.contains("verbatimCollection")
+								) {
+							// allowed case two, transcription into verbatim fields, must be exact list of all verbatim fields.
 
 							String barcode = "";
 							int lineNumber = 0;
@@ -185,17 +192,14 @@ public class JobVerbatimFieldLoad  implements RunnableJob, Runnable {
 								try { 
 									String verbatimLocality = record.get("verbatimLocality");
 									String verbatimDate = record.get("verbatimDate");
-									/** 
-									// TODO: Add support for these fields.
 									String verbatimCollector = record.get("verbatimCollector");
 									String verbatimCollection = record.get("verbatimCollection");
 									String verbatimNumbers = record.get("verbatimNumbers");
 									String verbatimUnclasifiedText = record.get("verbatimUnclassifiedText");
-									 */
 									barcode = record.get("barcode");
 									String questions = record.get("questions");
-
-									fl.load(barcode, verbatimLocality, verbatimDate, questions);
+									
+									fl.load(barcode, verbatimLocality, verbatimDate, verbatimCollector, verbatimCollection, verbatimNumbers, verbatimUnclasifiedText, questions);
 									counter.incrementSpecimensUpdated();
 								} catch (IllegalArgumentException e) {
 									RunnableJobError error =  new RunnableJobError(file.getName(), 
@@ -213,9 +217,37 @@ public class JobVerbatimFieldLoad  implements RunnableJob, Runnable {
 							}
 
 						} else { 
-							errors.append("Error Loading data: Unsupported number of column headers found (").append(headerList.size()).append(").\n");	
+							// allowed case three, transcription into arbitrary sets verbatim or other fields
+							// TODO: Support arbitrary column load, without overwriting for absent columns.
+							while (iterator.hasNext()) {
+								Map<String,String> data = new HashMap<String,String>();
+								CSVRecord record = iterator.next();
+							    String barcode = record.get("barcode");
+							    Iterator<String> hi = headerList.iterator();
+							    boolean containsNonVerbatim = false;
+							    while (hi.hasNext()) {
+							    	String header = hi.next();
+							    	if (!header.equals("barcode")) { 
+							            data.put(header, record.get(header));
+							            if (!header.equals("questions") && MetadataRetriever.isFieldExternallyUpdatable(Specimen.class, header) && MetadataRetriever.isFieldVerbatim(Specimen.class, header) ) { 
+							            	containsNonVerbatim = true;
+							            }
+							    	}
+							    }
+							    if (data.size()>0) { 
+							    	try {
+							    		if (containsNonVerbatim) { 
+										    fl.loadFromMap(barcode, data, WorkFlowStatus.STAGE_CLASSIFIED, true);
+							    		} else { 
+										    fl.loadFromMap(barcode, data, WorkFlowStatus.STAGE_VERBATIM, true);
+							    		}
+									} catch (LoadException e) {
+										errors.append("Error loading row ").append(e.getMessage()).append("\n");	
+										log.error(e.getMessage(), e);
+									}
+							    }
+							}
 						}
-
 					} 
 
 				} catch (FileNotFoundException e) {

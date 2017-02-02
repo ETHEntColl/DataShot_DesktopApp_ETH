@@ -235,9 +235,7 @@ public class JobCleanDirectory implements RunnableJob, Runnable {
 
 					// retrieve a list of image records in the selected directory
 					ICImageLifeCycle ils = new ICImageLifeCycle();
-					ICImage pattern = new ICImage();
-					pattern.setPath(pathToCheck);
-					List<ICImage> images = ils.findByExample(pattern);
+					List<ICImage> images = ils.findAllInDir(pathToCheck);
 					Iterator<ICImage> iter = images.iterator();
 					while (iter.hasNext()) { 
 						ICImage image = iter.next();
@@ -369,7 +367,7 @@ public class JobCleanDirectory implements RunnableJob, Runnable {
 	 */
 	@Override
 	public String getName() {
-		return "Redo OCR for specimens in state " + WorkFlowStatus.STAGE_0;
+		return "Cleanup deleted images from a directory.";
 	}
 
 	/* (non-Javadoc)

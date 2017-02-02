@@ -248,14 +248,110 @@ As of version 1.1.0, there is experimental support for transcription of
 verbatim information in other external applications and load of that data back into
 the datashot staging database.  
 
+## Transcription of (pin) label data without any interpretation.
+
+If you export the barcode number for a specimen and an image file with pin 
+label data for that specimen, values for verbatimUnclassifiedText and 
+questions can be loaded back into the database if the Specimen record has not 
+been processed beyond TaxonEntered, and if no values are present in the 
+verbatimUnclassifiedText field.  To do this, construct a csv file
+containing the data to be ingested with the columns below, and select 
+Action/Load Data from the main menu. Column names are case sensitive.  Exactly 
+these three columns must be present (no more, no fewer), but column order does not matter. 
+
+    "barcode","verbatimUnclassifiedText","questions"
+
+Allowed to change a record when: Record is in state Taxon Entered or Verbatim Entered.
+
+Barcode policy: Barcode must exist and must be unique.
+
+Overwrite policy: Will overwrite an existing value of verbatimUnclassifiedText.
+
+Questions policy: Any value provided in questions will be appended to the existing value for questions.
+
+Status when complete policy:  Record is in state Verbatim Transcribed.
+    
+This functionality is expected to change in future versions.
+
+## Transcription of (pin) label data with minimal interpretation into verbatim fields.
+
 If you export the barcode number for a specimen and an image file with pin 
 label data for that specimen, values for verbatimLocality, verbatimDate, and 
 questions can be loaded back into the database if the Specimen record has not 
 been processed beyond TaxonEntered, and if no values are present in the 
 verbatimLocality or DateNOS fields.  To do this, construct a csv file
 containing the data to be ingested with the columns below, and select 
-Action/Load Data from the main menu. 
+Action/Load Data from the main menu.  Column names are case sensitive. Exactly 
+these columns must be present (no more, no fewer), but column order does not matter. 
 
-    "barcode","verbatimLocality","verbatimDate","questions"
+    "barcode","verbatimLocality","verbatimDate","verbatimCollector","verbatimCollection","verbatimNumbers","verbatimUnclassifiedText","questions"
+
+Allowed to change a record when: Record is in state Taxon Entered or Verbatim Entered.
+
+Barcode policy: Barcode must exist and must be unique.
+
+Overwrite policy: Does not overwrite any existing values.
+
+Questions policy: Any value provided in questions will be appended to the existing value for questions.
+
+Status when complete policy:  Record is in state Verbatim Transcribed.
+
+This functionality is expected to change in future versions.
+
+## Transcription of (pin) label data with interpretation.
+
+If you export the barcode number for a specimen and an image file with pin 
+label data for that specimen, values for any of the fields listed below can be
+loaded back into the database in a csv file that contains a column "barcode", 
+and optionally a column "questions".  To do this, construct a csv file
+containing the data to be ingested barcode and any the columns below, and select 
+Action/Load Data from the main menu.  Column names are case sensitive. Exactly 
+these columns must be present (no more, no fewer), but column order does not matter. 
+
+    "barcode","Higher_Geography","SpecificLocality","questions"
+
+* TypeStatus
+* TypeNumber
+* CitedInPublication
+* Features
+* Higher_Geography
+* SpecificLocality
+* VerbatimLocality
+* VerbatimCollector
+* VerbatimCollection
+* VerbatimNumbers
+* VerbatimUnclassifiedText
+* Minimum_Elevation
+* Maximum_Elevation
+* Elev_Units
+* CollectingMethod
+* ISODate 
+* DateNOS (use instead of vebatimDate when loading an arbitrary set of columns).
+* DateEmerged
+* DateEmergedIndicator
+* DateCollected
+* DateCollectedIndicator
+* Collection
+* SpecimenNotes
+* LifeStage
+* Sex
+* PreparationType
+* Habitat
+* Microhabitat
+* AssociatedTaxon
+* Questions
+* Inferences
+* LocationInCollection
+* ValidDistributionFlag
+
+Allowed to change a record when: Record is in state Taxon Entered, Verbatim Entered, (Verbatim Classified??).
+
+Barcode policy: Barcode must exist and must be unique.
+
+Overwrite policy: Will overwrite any existing value in the Verbatim fields, but will not overwrite any existing value in any non-Verbatim field.
+
+Questions policy: Any value provided in questions will be appended to the existing value for questions.
+
+Status when complete policy:  If any non-verbatim field is present, Verbatim Classified, othewise, verbatimEntered.
 
 This functionality is expected to change in future versions.
