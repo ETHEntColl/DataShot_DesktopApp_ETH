@@ -66,7 +66,7 @@ public class ImageCaptureApp {
 	public static final String APP_VERSION = "1.2.3-SNAPSHOT";
 	public static final String APP_NAME = "RapidCapture";
 	public static final String APP_DESCRIPTION = "Rapid capture of data from images of pin Labels and pinned insect \nspecimens developed for the MCZ Lepidoptera collection";
-	public static final String APP_COPYRIGHT = "Copyright © 2009-2016 President and Fellows of Harvard College";
+	public static final String APP_COPYRIGHT = "Copyright © 2009-2017 President and Fellows of Harvard College";
 	public static final String APP_LICENSE = "This program is free software; you can redistribute it and/or modify \n " + 
     "it under the terms of Version 2 of the GNU General Public License \n" +
     "as published by the Free Software Foundation" +
@@ -104,7 +104,8 @@ public class ImageCaptureApp {
      * 
      * @see edu.harvard.mcz.imagecapture.ImageCaptureProperties.KEY_IMAGEREGEX
      */
-    public static final String REGEX_IMAGEFILE = "^IMG_[0-9]{6}\\.JPG$";
+   // public static final String REGEX_IMAGEFILE = "^IMG_[0-9]{6}\\.JPG$";
+    public static final String REGEX_IMAGEFILE = "^ETHZ_ENT[0-9]{2}_[0-9]{4}_[0-9]{2}_[0-9]{2}_[0-9]{6}\\.JPG$";
     
     // ^([12][0-9]{3}((/[01][0-9]){1}(/[0-3][0-9])?)?)?\-?([12][0-9]{3}((/[01][0-9]){1}(/[0-3][0-9])?)?)??$
     
