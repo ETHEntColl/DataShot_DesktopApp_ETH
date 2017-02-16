@@ -24,6 +24,11 @@ import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import edu.harvard.mcz.imagecapture.exceptions.SaveFailedException;
+
 /**
  * Table Model for Collector objects showing just the name of the Collector.
  * 
@@ -34,6 +39,8 @@ public class CollectorTableModel extends AbstractTableModel {
 	
 	private static final long serialVersionUID = -3022078380872976717L;
 
+	private static final Log log = LogFactory.getLog(CollectorTableModel.class);
+	
 	private Set <Collector> collectors = null;
 	
 	public CollectorTableModel() { 
@@ -119,6 +126,21 @@ public class CollectorTableModel extends AbstractTableModel {
 		collectors.add(collector);
 		this.fireTableDataChanged();
 		
+	}
+
+	/**
+	 * @param rowIndex row to be deleted
+	 */
+	public void deleteRow(int rowIndex) {
+		Collector toRemove = ((Collector)collectors.toArray()[rowIndex]);
+		CollectorLifeCycle spals = new CollectorLifeCycle();
+		try {
+			spals.delete(toRemove);
+		    collectors.remove(toRemove);
+		    fireTableDataChanged();
+		} catch (SaveFailedException e) {
+			log.error(e.getMessage());
+		}
 	}
 
 }

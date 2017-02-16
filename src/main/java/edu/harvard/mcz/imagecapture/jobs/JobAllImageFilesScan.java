@@ -465,6 +465,7 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 											makeFrom.add(file.getPath());
 											log.debug(file.getPath());
 											File target = new File(thumbsDir.getPath() + File.separatorChar + file.getName());
+											log.debug(target.getPath());
 											if (!target.exists()) { 
 												BufferedImage img = new BufferedImage(Integer.parseInt(thumbWidth), Integer.parseInt(thumbHeight), BufferedImage.TYPE_INT_RGB);
 												img.createGraphics().drawImage(ImageIO.read(file).getScaledInstance(80, 120, Image.SCALE_SMOOTH),0,0,null);
@@ -612,6 +613,7 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 						String filename = fileToCheck.getName();
 						counter.incrementFilesSeen();
 						log.debug("Checking image file: " + filename); 
+						CandidateImageFile.debugCheckHeightWidth(fileToCheck);
 						// scan file for barcodes and ocr of unit tray label text
 						CandidateImageFile scannableFile = null;
 						try {
@@ -670,6 +672,7 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 										log.error("Error scanning for barcode: " + barcode);
 										barcode = "";
 									}
+									log.debug(barcode);
 									System.out.println("Barcode=" + barcode);
 									String exifComment = scannableFile.getExifUserCommentText();
 									TaxonNameReturner parser = null;
@@ -734,11 +737,20 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 										    if (rawOCR==null) { rawOCR = ""; } 
 										    state = WorkFlowStatus.STAGE_0;
 										    parser = new UnitTrayLabelParser(rawOCR);
-											RunnableJobError error =  new RunnableJobError(filename, "Failover to OCR.",
+										    // Provide error message to distinguish between entirely OCR or 
+										    if (((UnitTrayLabelParser)parser).isParsedFromJSON()) { 
+												RunnableJobError error =  new RunnableJobError(filename, "OCR Failover found barcode.",
+														barcode, exifComment, "Couldn't read Taxon barcode, failed over to OCR, but OCR found taxon barcode.",
+														(TaxonNameReturner)parser, null,
+														null, RunnableJobError.TYPE_FAILOVER_TO_OCR);
+												counter.appendError(error);
+										    } else { 
+										    	RunnableJobError error =  new RunnableJobError(filename, "Failover to OCR.",
 													barcode, exifComment, "Couldn't read Taxon barcode, failed over to OCR only.",
 													(TaxonNameReturner)parser, null,
-											null, RunnableJobError.TYPE_FAILOVER_TO_OCR);
-											counter.appendError(error);
+													null, RunnableJobError.TYPE_FAILOVER_TO_OCR);
+										    	counter.appendError(error);
+										    }
 										}  else { 
 											state = WorkFlowStatus.STAGE_1;
 											parser = labelRead;

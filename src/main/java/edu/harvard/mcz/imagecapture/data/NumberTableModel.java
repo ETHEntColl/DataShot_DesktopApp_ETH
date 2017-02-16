@@ -5,6 +5,11 @@ import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import edu.harvard.mcz.imagecapture.exceptions.SaveFailedException;
+
 /**
  * NumberTableModel Table model for displaying and editing Number records in a JTable.
  * 
@@ -14,6 +19,8 @@ import javax.swing.table.AbstractTableModel;
 public class NumberTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 2244991738218368487L;
+	
+	private static final Log log = LogFactory.getLog(NumberTableModel.class);
 	
 	public static final int COLUMN_TYPE = 1;
 	
@@ -113,5 +120,20 @@ public class NumberTableModel extends AbstractTableModel {
 			break;
 		}
 		
+	}
+
+	/**
+	 * @param rowIndex row to be deleted
+	 */
+	public void deleteRow(int rowIndex) {
+		Number toRemove = ((Number)numbers.toArray()[rowIndex]);
+		NumberLifeCycle spals = new NumberLifeCycle();
+		try {
+			spals.delete(toRemove);
+		    numbers.remove(toRemove);
+		    fireTableDataChanged();
+		} catch (SaveFailedException e) {
+			log.error(e.getMessage());
+		}
 	}
 }

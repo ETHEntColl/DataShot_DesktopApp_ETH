@@ -84,8 +84,42 @@ through the user interface in the application (Configuration/Users on the main m
 src/main/java/hibernate.cfg.xml into that directory and edit it to supply 
 connection parameters for your production database, then build with:
 
-    mvn package -DskipTests 
+    mvn package -P production 
 
+An executable jar file will be found in the build/ directory (and in the target/ directory).
+
+If you are working with an IDE (such as eclipse), you will probably want to use the following somewhat
+bizare incantation to create the executable jar file including the not_vcs/ configuration files, 
+and then to clean out the target/ directory so that your IDE will use the configuration files 
+from src/main/java rather than not_vcs (in target/classes) (letting your build with the IDE use 
+the default hibernate and log4j configurations, rather than the production ones, which get placed 
+where the IDE will used them by _mvn clean install -P production_).  
+
+    mvn clean install clean compile -P production
+
+You can also run integration tests once you have your local database and a user set up using the integrationTests profile:
+
+    mvn package -P integrationTests
+
+
+This will present you with a login dialog to run the tests, populated from the values in your src/main/java/hibernate.cfg.xml file.
+
+Builds were previously done with a mix of maven and ant to build the executable jar.  These are still available with
+the profile ant (which will leave executable jars in the build/ directory: 
+
+    mvn package -P ant
+
+Note: If using maven 2, and you get a build error in the form of dependency problem about jai-image-io-core: 
+
+    [ERROR] BUILD ERROR
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Failed to resolve artifact.
+    Unable to get dependency information: Unable to read the metadata file for artifact 'com.github.jai-imageio:jai-imageio-core:jar': Invalid JDK version in profile 'java8-and-higher': Unbounded range: [1.8, for project com.github.jai-imageio:jai-imageio-core
+  com.github.jai-imageio:jai-imageio-core:jar:1.3.1
+
+See http://stackoverflow.com/questions/42155692/why-isnt-zxing-playing-nicely-with-ant-java8-and-the-pom-xml for notes on how 
+to fix a syntax error in the pom in your local repository. You will need to edit ~/.m2/repository/com/github/jai-imageio/jai-imageio-core/1.3.1/jai-imageio-core-1.3.1.pom to change <jdk>[1.8,</jdk> to <jdk>[1.8,)</jdk>.  
+ 
 (If you have a test database set up that fits the parameters in the 
 hibernate.cfg.xml file, then you can omit the -DskipTests to run the tests, 
 which will include authenticating in to the test database.  You should not 

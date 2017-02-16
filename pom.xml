@@ -11,11 +11,21 @@
      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
   <dependencies>
-      <dependency>
+ 	<dependency>
+		<groupId>org.filteredpush</groupId>
+		<artifactId>event_date_qc</artifactId>
+		<version>1.0.0</version>
+	</dependency>
+	<dependency>
+		<groupId>antlr</groupId>
+		<artifactId>antlr</artifactId>
+		<version>2.7.7</version>
+	</dependency>
+    <dependency>
           <groupId>org.filteredpush</groupId>
           <artifactId>event_date_qc</artifactId>
           <version>1.0.0</version>
-      </dependency>
+    </dependency>
   	<dependency>
   		<groupId>antlr</groupId>
   		<artifactId>antlr</artifactId>
