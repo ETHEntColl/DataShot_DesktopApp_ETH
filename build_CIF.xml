@@ -28,7 +28,13 @@
                 <exclude name="**/hibernate.cfg.xml" />
             </fileset>            
             <fileset file="gpl-2.0.txt" />
-            <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/commons-cli/commons-cli/1.2/commons-cli-1.2.jar"/>
+            
+        	<!--new from paul-->
+        	<zipfileset excludes="META-INF/*.SF" src="${user.home}/.m2/repository/org/filteredpush/event_date_qc/1.0.0/event_date_qc-1.0.0.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="${user.home}/.m2/repository/joda-time/joda-time/2.2/joda-time-2.2.jar"/>
+        	<!--end new-->
+        	
+        	<zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/commons-cli/commons-cli/1.2/commons-cli-1.2.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/org/imgscalr/imgscalr-lib/4.2/imgscalr-lib-4.2.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/org/apache/commons/commons-csv/1.4/commons-csv-1.4.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${m2.root}/repository/com/drewnoakes/metadata-extractor/2.9.1/metadata-extractor-2.9.1.jar"/>

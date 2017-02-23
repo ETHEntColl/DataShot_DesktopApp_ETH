@@ -5,7 +5,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/lepidoptera</property>
+        
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 <!--        <property name="hibernate.connection.username">LEPIDOPTERA</property>-->
 <!--        <property name="hibernate.connection.password"></property>-->
@@ -13,10 +13,15 @@
 <!--        <property name="hibernate.connection.url">jdbc:oracle:thin:@server.mcz.harvard.edu:1521:srs</property>-->
 <!--        <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>-->
 
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/lepidoptera</property>
 		<property name="hibernate.connection.username">datashot</property>
 		<property name="hibernate.connection.password">pass</property>
+		
+		<!--  property name="hibernate.connection.url">jdbc:mysql://entocoll.ethz.ch:3306/lepidoptera</property>
+		<property name="hibernate.connection.username">ecdb</property>
+		<property name="hibernate.connection.password">***REMOVED***</property-->		
+		
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-
         <property name="connection.pool_size">1</property>
         <property name="current_session_context_class">thread</property>
         <property name="show_sql">true</property>  
