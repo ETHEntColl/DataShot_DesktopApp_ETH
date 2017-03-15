@@ -174,7 +174,7 @@ public class ImageCaptureProperties  extends AbstractTableModel {
 		propertiesFilePath = new StringBuffer(System.getProperty("user.dir"));
 		propertiesFilePath.append(System.getProperty("file.separator"));
 		propertiesFilePath.append(propertiesFilename);
-		System.out.println("Opening properties file: " + propertiesFilePath.toString());
+		log.debug("Opening properties file: " + propertiesFilePath.toString());
 		try {
 			loadProperties();
 		} catch (Exception e) {
@@ -404,9 +404,13 @@ public class ImageCaptureProperties  extends AbstractTableModel {
 	 * 
 	 */
 	private void checkDefaults() { 
+		//allie's hack - 1 liner
+		//properties.setProperty(KEY_COLLECTION,"ETHZ-ENT");
+		
+		//paul's original code
 		if (!properties.containsKey(KEY_COLLECTION))  {
 			// Root of the path of the place where all image files should be stored.
-			properties.setProperty(KEY_COLLECTION,ImageCaptureProperties.COLLECTION_MCZENT);	
+			properties.setProperty(KEY_COLLECTION,ImageCaptureProperties.COLLECTION_MCZENT);
 		} else { 
 			switch (properties.get(KEY_COLLECTION).toString().trim()) { 
 			case (ImageCaptureProperties.COLLECTION_ETHZENT):
@@ -422,11 +426,12 @@ public class ImageCaptureProperties  extends AbstractTableModel {
 					ImageCaptureProperties.COLLECTION_ETHZENT);
 			}
 		}
+		log.debug("Forced configuration: ETHZ-ENT");
 		if (!properties.containsKey(KEY_IMAGEBASE))  {
 			// Root of the path of the place where all image files should be stored.
 			//properties.setProperty(KEY_IMAGEBASE,"/mount/lepidopteraimages");
-			//properties.setProperty(KEY_IMAGEBASE,"C:\\Users\\Digitizing\\Desktop\\images-test\\");				
-			properties.setProperty(KEY_IMAGEBASE,"/Users/altheaparker/Desktop/entomology-builds/TestImages");
+			properties.setProperty(KEY_IMAGEBASE,"C:\\Users\\Digitizing\\Desktop\\images-test\\");				
+			//properties.setProperty(KEY_IMAGEBASE,"/Users/altheaparker/Desktop/entomology-builds/TestImages");
 		}
 		if (!properties.containsKey(KEY_IMAGEBASEURI))  {
 			// URI to the root of the path of the place where all image files should be stored.

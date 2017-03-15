@@ -508,7 +508,8 @@ public class CandidateImageFile {
 				}
                 Date d = new Date();
                 if (log.isTraceEnabled()) { 
-                    String t = Long.toString(d.getTime());
+                    log.debug("Trace is enabled!!!!");
+                	String t = Long.toString(d.getTime());
                     File out = new File("TempBarcodeCrop"+t+".png");
 				    ImageIO.write(temp, "png", out);
 				    log.trace("Wrote: " + out.getPath());
