@@ -75,10 +75,21 @@ public class ImageCaptureProperties  extends AbstractTableModel {
 	 */
 	public static final String KEY_IMAGEREGEX = "images.filenameregex";
 	/**
-	 * Size to which to rescale width of unit tray label barcode to on retry of 
-	 * barcode read.
+	 * Sizes to which to rescale width of unit tray label barcode to on retry of 
+	 * barcode read.  Value can be a comma delimited list of integers, or a comma
+	 * delimited list of integers and the words sharpen, brighter, dimmer, for 
+	 * example '400' or '400,500' or '400,400brighter,400sharpenbrighter,500dimmer'.
 	 */
 	public static final String KEY_IMAGERESCALE = "images.barcoderescalesize";
+	/**
+	 * If true, after scanning for a barcode in an image with zxing and failing to
+	 * find one, repeat with the zxing property TryHarder set to true, otherwise 
+	 * just try once with TryHarder set to false.  Setting to true will slow down 
+	 * preprocessing, but is more likely to find problematic barcodes.  The configured 
+	 * sequence is applied for every check for a barcode, including each individual 
+	 * entry in the images.barcodescalesize list.
+	 */
+	public static final String KEY_IMAGEZXINGALSOTRYHARDER = "images.zxingalsotryharder";
 	/**
 	 * PostitionTemplate to use by default (to try first).
 	 */
@@ -442,8 +453,12 @@ public class ImageCaptureProperties  extends AbstractTableModel {
 			properties.setProperty(KEY_IMAGEREGEX,ImageCaptureApp.REGEX_IMAGEFILE);	
 		}			
 		if (!properties.containsKey(KEY_IMAGERESCALE))  {
-			// Size to which to rescale width of unit tray label barcode to on retry.
-			properties.setProperty(KEY_IMAGERESCALE,"400");	
+			// Sizes to which to rescale width of unit tray label barcode to on retry.
+			properties.setProperty(KEY_IMAGERESCALE,"400,600sharpen,600brighter,600dimmer,400sharpenbrighter");	
+		}
+		if (!properties.containsKey(KEY_IMAGEZXINGALSOTRYHARDER)) {
+			// Default value for choosing whether or not to also try harder with xzing.
+		    properties.setProperty(KEY_IMAGEZXINGALSOTRYHARDER, "true");
 		}
 		if (!properties.containsKey(KEY_TEMPLATEDEFAULT)) {
 			// PostitionTemplate to use by default

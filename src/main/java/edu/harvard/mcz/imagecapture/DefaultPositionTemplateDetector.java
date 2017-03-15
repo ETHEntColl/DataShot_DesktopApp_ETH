@@ -44,16 +44,23 @@ public class DefaultPositionTemplateDetector implements	PositionTemplateDetector
 
 	private static final Log log = LogFactory.getLog(DefaultPositionTemplateDetector.class);
 	
-	/* (non-Javadoc)
-	 * @see edu.harvard.mcz.imagecapture.interfaces.PositionTemplateDetector#detectTemplateForImage(java.io.File)
-	 */
 	@Override
 	public String detectTemplateForImage(File anImageFile) throws UnreadableFileException {
+		return detectTemplateForImage(anImageFile, null);
+	}
+	@Override
+	public String detectTemplateForImage(CandidateImageFile scannableFile) throws UnreadableFileException {
+		return detectTemplateForImage(scannableFile.getFile(), scannableFile);
+	}
+	
+	protected String detectTemplateForImage(File anImageFile, CandidateImageFile scannableFile) throws UnreadableFileException {
 		String result = PositionTemplate.TEMPLATE_NO_COMPONENT_PARTS;
 		// We will be calling getBarcodeText(PositionTemplate aTemplate) below, so it doesn't matter
 		// that we are instatiating the scannable file here with a default template.
-		CandidateImageFile scannableFile = null;
-		scannableFile = new CandidateImageFile(anImageFile, new PositionTemplate());
+		//CandidateImageFile scannableFile = null;
+		if (scannableFile==null) { 
+		   scannableFile = new CandidateImageFile(anImageFile, new PositionTemplate());
+		}
 
 		List<String> templates = PositionTemplate.getTemplateIds();
 		// iterate through templates and check until the first template where a barcode is found
@@ -70,8 +77,8 @@ public class DefaultPositionTemplateDetector implements	PositionTemplateDetector
 					// Check to see if the barcode is in the part of the template
 					// defined by getBarcodeULPosition and getBarcodeSize.
 					String text = scannableFile.getBarcodeText(template);
-					log.debug("Found:[" + text + "] status="+ scannableFile.getBarcodeStatus());
-					if (scannableFile.getBarcodeStatus()==CandidateImageFile.RESULT_BARCODE_SCANNED) { 
+					log.debug("Found:[" + text + "] status="+ scannableFile.getCatalogNumberBarcodeStatus());
+					if (scannableFile.getCatalogNumberBarcodeStatus()==CandidateImageFile.RESULT_BARCODE_SCANNED) { 
 						// RESULT_BARCODE_SCANNED is only returned if the reader read a QR code barcode inside
 						// the area defined by the template for containing the barcode.  
 						// If we got here, we found a barcode in the expected place and know which template

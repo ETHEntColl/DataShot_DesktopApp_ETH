@@ -217,8 +217,8 @@ public class JobSingleBarcodeScan implements RunnableJob, Runnable {
 			try {
 				scannableFile = new CandidateImageFile(fileToCheck, defaultTemplate);
 
-				String barcode = scannableFile.getBarcodeText(defaultTemplate);
-				if (scannableFile.getBarcodeStatus()!=CandidateImageFile.RESULT_BARCODE_SCANNED) {
+				String barcode = scannableFile.getBarcodeTextAtFoundTemplate();
+				if (scannableFile.getCatalogNumberBarcodeStatus()!=CandidateImageFile.RESULT_BARCODE_SCANNED) {
 					log.error("Error scanning for barcode: " + barcode);
 					barcode = "";
 				}
@@ -298,13 +298,13 @@ public class JobSingleBarcodeScan implements RunnableJob, Runnable {
 				try {
 					// Read unitTrayLabelBarcode, failover to OCR and parse UnitTray Label
 					rawOCR = "";
-					labelRead = scannableFile.getLabelQRText(defaultTemplate);
+					labelRead = scannableFile.getTaxonLabelQRText(defaultTemplate);
 					if (labelRead==null) { 
 						try { 
-							labelRead = scannableFile.getLabelQRText(new PositionTemplate("Test template 2"));
+							labelRead = scannableFile.getTaxonLabelQRText(new PositionTemplate("Test template 2"));
 						} catch (NoSuchTemplateException e1) {
 							try { 
-								labelRead = scannableFile.getLabelQRText(new PositionTemplate("Small template 2"));
+								labelRead = scannableFile.getTaxonLabelQRText(new PositionTemplate("Small template 2"));
 							} catch (NoSuchTemplateException e2) {
 							     log.error("None of " + defaultTemplate.getName() + " Test template 2 or Small template 2 were found");
 							}

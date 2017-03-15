@@ -259,7 +259,7 @@ public class JobRepeatOCR implements RunnableJob, Runnable {
 			Specimen s = specimens.get(i);
 			Set<ICImage> images = s.getICImages();
 			Iterator<ICImage> iter = images.iterator();
-			while (iter.hasNext()) { 
+			while (iter.hasNext() && runStatus != RunStatus.STATUS_TERMINATED) { 
 				ICImage image = (ICImage) iter.next();
 				if (scan==SCAN_ALL || image.getPath().startsWith(pathToCheck)) {
 					// Add image for specimen to list to check
@@ -269,7 +269,9 @@ public class JobRepeatOCR implements RunnableJob, Runnable {
 				}
 			}			
 		}
-		log.debug("Found " + files.size() + " Specimen records on which to repeat OCR.");
+		String message = "Found " + files.size() + " Specimen records on which to repeat OCR.";
+		log.debug(message);
+		Singleton.getSingletonInstance().getMainFrame().setStatusMessage(message);
 
 		return files;
 	}
@@ -318,10 +320,10 @@ public class JobRepeatOCR implements RunnableJob, Runnable {
 				UnitTrayLabel labelRead = null;
 				boolean foundQRText = false;
 				try { 
-					labelRead = scannableFile.getLabelQRText(new PositionTemplate("Test template 2"));
+					labelRead = scannableFile.getTaxonLabelQRText(new PositionTemplate("Test template 2"));
 				} catch (NoSuchTemplateException e) {
 					try { 
-						labelRead = scannableFile.getLabelQRText(new PositionTemplate("Small template 2"));
+						labelRead = scannableFile.getTaxonLabelQRText(new PositionTemplate("Small template 2"));
 					} catch (NoSuchTemplateException e1) {
 						log.error("Neither Test template 2 nor Small template 2 found");
 					}
@@ -342,7 +344,7 @@ public class JobRepeatOCR implements RunnableJob, Runnable {
 				// Test this image to see if is a specimen image
 				String barcode = scannableFile.getBarcodeText(templateToUse);
 				Singleton.getSingletonInstance().getMainFrame().setStatusMessage("Checking " + barcode + ".");
-				if (scannableFile.getBarcodeStatus()!=CandidateImageFile.RESULT_BARCODE_SCANNED) {
+				if (scannableFile.getCatalogNumberBarcodeStatus()!=CandidateImageFile.RESULT_BARCODE_SCANNED) {
 					log.error("Error scanning for barcode: " + barcode);
 					barcode = "";
 				}

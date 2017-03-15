@@ -47,7 +47,7 @@ import edu.harvard.mcz.imagecapture.CandidateImageFile;
 import edu.harvard.mcz.imagecapture.ImageCaptureApp;
 import edu.harvard.mcz.imagecapture.ImageCaptureProperties;
 import edu.harvard.mcz.imagecapture.RunnableJobReportDialog;
-import edu.harvard.mcz.imagecapture.MCZBarcodePositionTemplateDetector;
+import edu.harvard.mcz.imagecapture.ConfiguredBarcodePositionTemplateDetector;
 import edu.harvard.mcz.imagecapture.PositionTemplate;
 import edu.harvard.mcz.imagecapture.Singleton;
 import edu.harvard.mcz.imagecapture.UnitTrayLabelParser;
@@ -99,6 +99,7 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 	
 	private int scan = SCAN_ALL;     // default scan all
 	private File startPointSpecific = null;  // place to start for scan_specific
+	private File startPoint = null;  // start point used.
 	private String firstFile = null;  // for scan_specific, the first file seen
 	private String lastFile = null;   // for scan_specific, the last file seen
 	private int runStatus = RunStatus.STATUS_NEW;
@@ -195,7 +196,7 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 		Singleton.getSingletonInstance().getJobList().addJob((RunnableJob)this);
 		runStatus = RunStatus.STATUS_RUNNING;
 		File imagebase = null;   // place to start the scan from, imagebase directory for SCAN_ALL
-		File startPoint = null;
+		startPoint = null;
 		// If it isn't null, retrieve the image base directory from properties, and test for read access.
 		if (Singleton.getSingletonInstance().getProperties().getProperties().getProperty(ImageCaptureProperties.KEY_IMAGEBASE)==null) {
 			JOptionPane.showMessageDialog(Singleton.getSingletonInstance().getMainFrame(), "Can't start scan.  Don't know where images are stored.  Set imagbase property.", "Can't Scan.", JOptionPane.ERROR_MESSAGE);	
@@ -617,11 +618,11 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 						// scan file for barcodes and ocr of unit tray label text
 						CandidateImageFile scannableFile = null;
 						try {
-							PositionTemplateDetector detector = new MCZBarcodePositionTemplateDetector();
+							PositionTemplateDetector detector = new ConfiguredBarcodePositionTemplateDetector();
 							boolean isSpecimenImage = false;
 							boolean isDrawerImage = false;
 							boolean reattach = false;  // image is detached instance and should be reattached instead of persisted denovo.
-							try {
+							// try {
 								// Check for an existing image record.
 								ICImageLifeCycle imageCont = new ICImageLifeCycle();
 								ICImage tryMe = new ICImage();
@@ -661,35 +662,45 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 									// No database record for this file.
 									
 									// ** Identify the template.
-									String templateId = detector.detectTemplateForImage(fileToCheck);
+									// String templateId = detector.detectTemplateForImage(fileToCheck);
+									// log.debug("Detected Template: " + templateId);
+									// PositionTemplate template = new PositionTemplate(templateId);
+									// // Found a barcode in a templated position in the image.
+									// // ** Scan the file based on this template.
+									// scannableFile = new CandidateImageFile(fileToCheck, template);
+									
+									// Construct a CandidateImageFile with constructor that self detects template
+									scannableFile = new CandidateImageFile(fileToCheck);
+									PositionTemplate template = scannableFile.getTemplateUsed();
+									String templateId = template.getName();
 									log.debug("Detected Template: " + templateId);
-									PositionTemplate template = new PositionTemplate(templateId);
-									// Found a barcode in a templated position in the image.
-									// ** Scan the file based on this template.
-									scannableFile = new CandidateImageFile(fileToCheck, template);
-									String barcode = scannableFile.getBarcodeText(template);
-									if (scannableFile.getBarcodeStatus()!=CandidateImageFile.RESULT_BARCODE_SCANNED) {
+									log.debug(scannableFile.getCatalogNumberBarcodeStatus());
+									String barcode = scannableFile.getBarcodeTextAtFoundTemplate();
+									if (scannableFile.getCatalogNumberBarcodeStatus()!=CandidateImageFile.RESULT_BARCODE_SCANNED) {
 										log.error("Error scanning for barcode: " + barcode);
 										barcode = "";
 									}
 									log.debug(barcode);
 									System.out.println("Barcode=" + barcode);
 									String exifComment = scannableFile.getExifUserCommentText();
+									log.debug(exifComment);
 									TaxonNameReturner parser = null;
 									String rawOCR = "";
 									UnitTrayLabel labelRead = null;
 									String state = WorkFlowStatus.STAGE_0;
-									labelRead = scannableFile.getLabelQRText(template);
+									labelRead = scannableFile.getTaxonLabelQRText(template);
 									if (labelRead==null) { 
 										try { 
-											labelRead = scannableFile.getLabelQRText(new PositionTemplate("Test template 2"));
+											labelRead = scannableFile.getTaxonLabelQRText(new PositionTemplate("Test template 2"));
 										} catch (NoSuchTemplateException e) {
 											try { 
-												labelRead = scannableFile.getLabelQRText(new PositionTemplate("Small template 2"));
+												labelRead = scannableFile.getTaxonLabelQRText(new PositionTemplate("Small template 2"));
 											} catch (NoSuchTemplateException e1) {
 												log.error("Neither Test template 2 nor Small template 2 found");
 											}
 										}
+									} else { 
+									   log.debug(labelRead.toJSONString());
 									}
 									if (labelRead!=null) { 
 										rawOCR = labelRead.toJSONString();
@@ -713,7 +724,7 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 									    	while (x < xmax) { 
 										        utpos.setSize(new Dimension(utpos.width +x, utpos.height));
 										        shifted.setUtBarcodePosition(utpos);
-										        labelRead = scannableFile.getLabelQRText(shifted);
+										        labelRead = scannableFile.getTaxonLabelQRText(shifted);
 										        x++;
 										        if (labelRead !=null ) { 
 										        	x = xmax;
@@ -781,7 +792,7 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 										isSpecimenImage = true;
 										System.out.println("Specimen Image");
 									} else { 
-										if (exifComment.matches(Singleton.getSingletonInstance().getProperties().getProperties().getProperty(ImageCaptureProperties.KEY_REGEX_DRAWERNUMBER))) { 
+										if (exifComment!=null && exifComment.matches(Singleton.getSingletonInstance().getProperties().getProperties().getProperty(ImageCaptureProperties.KEY_REGEX_DRAWERNUMBER))) { 
 											isDrawerImage = true;
 											System.out.println("Drawer Image");
 										} else {
@@ -1082,9 +1093,9 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 										counter.incrementFilesExisting();
 									}
 								}
-							} catch (NoSuchTemplateException e) {
-								log.error("Detected Template for image doesn't exist. " + e.getMessage());
-							} 
+							// } catch (NoSuchTemplateException e) {
+							//	log.error("Detected Template for image doesn't exist. " + e.getMessage());
+							//} 
 
 
 
@@ -1141,10 +1152,13 @@ public class JobAllImageFilesScan implements RunnableJob, Runnable{
 	 */
 	@Override
 	public String getName() {
-		if (scan==SCAN_ALL) 
+		if (scan==SCAN_ALL) { 
 		   return "Preprocess all image files";
-		else 
-		   return "Preprocess images in " + startPointSpecific;
+	    } else { 
+		   String sp = startPoint.getPath();
+		   if (sp ==null || sp.length()==0) { sp = startPointSpecific.getPath(); } 
+		   return "Preprocess images in " + sp;
+		}
 	}
 
 	/* (non-Javadoc)

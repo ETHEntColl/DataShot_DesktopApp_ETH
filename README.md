@@ -43,12 +43,13 @@ See: https://github.com/MCZbase/DataShot_DesktopApp/wiki
 
 # Building
 
-Use maven to build (ant is invoked by maven to build executable jar files).  
+Use maven to build (ant is optionally invoked by maven to build executable jar files).  
 
 You will need to do some preparation work in order to build.
 
 (1) The Oracle JDBC driver isn't available in a public Maven repository.  
-You will need to download the jar from Oracle and add it locally: 
+You will need to download the jar from Oracle and add it locally (to support the build
+even if you aren't using Oracle): 
 
 Download the Oracle 10g release 2 (10.2.0.5) JDBC driver ojdbc14.jar 
 from oracle.  
@@ -59,15 +60,17 @@ Add it to your local .m2
       -Dversion=10.2.0.5.0 -Dpackaging=jar -Dfile=ojdbc14.jar -DgeneratePom=true
 
 (2) Create a test database.  A dump of the schema of a working 
-test database (as of version 1.0.4) is in docs_manual/sql/mysql_ver1.0.4.sql
+test database (as of version 1.2.2) is in docs_manual/sql/mysql_ver1.2.2.sql
 the expected name, user and location of this database are in 
-src/main/java/hibernate.cfg.xml (you will need to create a database lepidoptera).
+src/main/java/hibernate.cfg.xml (you will need to create a database lepidoptera).  
+(The default name of the database is lepidoptera, but this can be changed, and one database 
+can be configured for testing and another for production use).
 
-    mysql lepidoptera -p < docs_manual/sql/mysql_ver1.0.4.sql
-    mysql lepidoptera -p < docs_manual/sql/mysql_post_ver1.1.0.changes.sql
+
+    mysql lepidoptera -p < docs_manual/sql/mysql_ver1.2.2.sql
 
 Once this database has been created, you'll need to create a user that the
-application will use to connect to the database, that is a user LEPIDOPTERA 
+application will use to connect to the database, that is (in the default configuration) a user LEPIDOPTERA 
 with select/insert/update/delete privileges on the lepidoptera schema on localhost.
 
     grant select, insert, update, delete on lepidoptera.* to 'LEPIDOPTERA'@'localhost';     
@@ -83,6 +86,7 @@ through the user interface in the application (Configuration/Users on the main m
 (3) Create a not_vcs directory in the project root, copy the file
 src/main/java/hibernate.cfg.xml into that directory and edit it to supply 
 connection parameters for your production database (likewise the log4j configuration file if you want to change the logging from the production jar), 
+You should not put a password inside src/main/java/hibernate.cfg.xml.
 
      $ mkdir not_vcs
      $ cp src/main/java/hibernate.cfg.xml not_vcs/
@@ -107,8 +111,13 @@ You can also run integration tests once you have your local database and a user 
 
     mvn package -P integrationTests
 
-
 This will present you with a login dialog to run the tests, populated from the values in your src/main/java/hibernate.cfg.xml file.
+
+The resulting executable jar file will be in build/Datashot{version}-jar-with-dependencies.jar,
+you can run it, for example, with:
+
+    java -jar DataShot-1.2.4-jar-with-dependencies.jar 
+
 
 Builds were previously done with a mix of maven and ant to build the executable jar.  These are still available with
 the profile ant (which will leave executable jars in the build/ directory: 
@@ -126,11 +135,6 @@ Note: If using maven 2, and you get a build error in the form of dependency prob
 See http://stackoverflow.com/questions/42155692/why-isnt-zxing-playing-nicely-with-ant-java8-and-the-pom-xml for notes on how 
 to fix a syntax error in the pom in your local repository. You will need to edit ~/.m2/repository/com/github/jai-imageio/jai-imageio-core/1.3.1/jai-imageio-core-1.3.1.pom to change <jdk>[1.8,</jdk> to <jdk>[1.8,)</jdk>.  
  
-(If you have a test database set up that fits the parameters in the 
-hibernate.cfg.xml file, then you can omit the -DskipTests to run the tests, 
-which will include authenticating in to the test database.  You should not 
-put a password inside src/main/java/hibernate.cfg.xml)
-
 The resulting executable jar file will be in build/ImageCapture.jar,
 you can run it with:
 
@@ -193,7 +197,14 @@ There is an expectation that images will be placed on the fileserver in batches 
 ## Configuration
 
 To configure the application, see Configuration/Properties on the main menu
-or edit the imagecapture.properties file created when the application first runs.
+or edit the imagecapture.properties file created when the application first runs.  
+On the first run for a deployment, default values will be used, these almost certainly 
+are not the values you want for that deployment, so carefuly examine and edit the 
+configuration parameters when first running each deployed instance.  The recommended 
+method for editing the configuration parameters is through Configuration/Properties 
+on the main menu (as some characters need to be escaped in the properties file, 
+the configuration editor handles this automatically, manual edits are more prone
+to errors).  
 
 The following configuration parameters are critical for setup:
 
@@ -237,6 +248,18 @@ images.metadatacontainsbarcode, if true, the application expects that the exif c
 
 default.preparation this is the value that will be used by default for the specimen preparation value.
 
+
+The following configuration parameters control how trying harder to detect barcodes works when simply checking the first time doesn't find a barcode:
+
+    images.barcoderescalesize=400,600sharpen,600brighter,600dimmer,400sharpenbrighter
+    images.zxingalsotryharder=true
+
+images.barcodescscalesize is a comma separated list of pixel widths to resize cropped templated image areas that could contain a barcode to before rechecking for the barcode with zxing, with optional image processing transformations sharpen, brighter, and dimmer.  This describes a sequence of operations that will be performed to prepare a cropped area that might contain a barcode if an initial detection of a barcode in that area fails, and a subsequent rescaling of the cropped area to 800 pixels in width fails.  Each operation is carried out until one succeeds.  Adding more operations can increase the time taken in preprocessing images, but can reduce the number of cases where preprocessing fails.  The numbers are the pixel widths to which the cropped area (templated area for catalog number barcode or taxon name unit tray label barcode) are rescaled.  The optional transformations sharpen (sharpens the cropped area before trying to detect a barcode), brighter (brightens the image by an approximation of 1 f stop, suitable if lighting of the barcode is dimmer than the rest of the image and it appears grey), and dimmer (dims the image by an approximation of 1 f stop, sutiable if lighting of the barcode is brighter than the rest of the image and the barcode appears washed out in the image) can also be applied.  If both brighter and dimmer are specified, only dimmer will be applied, but brighter and dimmer can be combined with sharpen.  If all the configured operations fail, a number of additional hard coded operations are also tried (including further brightening and dimming and shifting the crop frame by a few pixels in each direction).  Setting the debug level to trac (see the comments in log4j.properties) will leave behind copies of cropped images from each barcode reading attempt, examining these and the log file can help in adjusting this configuration.
+
+images.zxingalsotryharder takes the values true or false.  If false, each barcode reading attempt is performed only once, with the zxing barcode reading code configured normally.  If true, each barcode reading attempt that fails is repeated with zxing configured to try harder (thus xzing also try harder).
+
+If the catalog number barcode is present in the image exif metadata (scanned into the exif comment), then the default values will probably be fine and should result in around a 1% rate where a template is not detected  and a specimen record is created in state OCR, and a smaller rate where preprocessing failed to create a specimen record.  If the catalog number is only present in the barcode in the image, then testing and tuning further will be of significant benefit, as failure cases where a specimen record mean more handling steps for the problem images (a recommendation for these is to first review them manually for proper placement of barcode labels and proper lighting adjustment (feeding back quality information to the personnel doing the specimen handling and imaging), if those are satisfactory, then entering the catalog number barcode into the image exif comment field, otherwise locating the specimen and taking the image again.  If you are seeing many failure conditions, then the template(s) may not match label placement well, the barcodes may not be well lit, or the barcodes may be printed with too low a resolution printer.  
+
 The following configuration parameters control the behavior of the user interface:
 
     details.scroll=none
@@ -259,6 +282,9 @@ The following properties just store recent activity, they aren't involved in con
 
     fileload.lastpath=~/workspace/butterflies_sf/docs_manual/example_files/loadtest.csv
     scanonebarcode.lastpath=~/testImages/base/problem_2016Oct12/IMG_000057.JPG
+
+**Note well: If you do not configure each deployed instance, it will not behave as you expect since 
+default values for these configuration parameters will be used.**  
 
 ## Templates
 
