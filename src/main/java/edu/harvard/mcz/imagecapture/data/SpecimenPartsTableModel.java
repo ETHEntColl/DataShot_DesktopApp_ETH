@@ -24,6 +24,9 @@ import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import edu.harvard.mcz.imagecapture.exceptions.SaveFailedException;
 
 
@@ -36,6 +39,8 @@ public class SpecimenPartsTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -4139892019645663114L;
 	
 	private Set<SpecimenPart> specimenParts;
+	
+	private static final Log log = LogFactory.getLog(SpecimenPartsTableModel.class);
 	
 	public SpecimenPartsTableModel() {
 		super();

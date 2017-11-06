@@ -728,31 +728,43 @@ public class CandidateImageFile {
 	public String getLabelOCRText(PositionTemplate aTemplate) throws OCRReadException {
 		// Actual read attempt is only invoked once,
 		// subsequent calls return cached value.
+		log.debug("in CandidateImageFile.getLabelOCRText() 1 labelText is " + labelText);
 		if (labelText == null) { 
 			BufferedImage image = null;
 			String error = "";
 			barcodeStatus = RESULT_ERROR;
 			try {
 				image = ImageIO.read(candidateFile);
+				log.debug("image is " + image);
 			} catch (IOException e) {
 				error = e.toString() + " " + e.getMessage();
 				log.error(error);
 			}
 			if (image != null) {
 				try { 
-					int x = aTemplate.getTextPosition().width;    
-					int y =  aTemplate.getTextPosition().height; 
-					int w = aTemplate.getTextSize().width;  
-					int h = aTemplate.getTextSize().height;
-
-					// OCR and parse UnitTray Label
-					ConvertTesseractOCR o = new ConvertTesseractOCR(image.getSubimage(x, y, w, h));
-					labelText = "";
-					try {
-						labelText = o.getOCRText();
-					} catch (OCRReadException e) {
-						log.error(e.getMessage());
-						e.printStackTrace();
+					if(aTemplate != null && aTemplate.getTextPosition() != null){ //allie edit
+						int x = aTemplate.getTextPosition().width;   
+						log.debug("in CandidateImageFile.getLabelOCRText() 2 x is " + x);
+						int y =  aTemplate.getTextPosition().height; 
+						log.debug("in CandidateImageFile.getLabelOCRText() 3 y is " + x);
+						int w = aTemplate.getTextSize().width;  
+						log.debug("in CandidateImageFile.getLabelOCRText() 4 w is " + x);
+						int h = aTemplate.getTextSize().height;
+						log.debug("in CandidateImageFile.getLabelOCRText() 5 h is " + x);
+	
+						// OCR and parse UnitTray Label
+						ConvertTesseractOCR o = new ConvertTesseractOCR(image.getSubimage(x, y, w, h));
+						log.debug("in CandidateImageFile.getLabelOCRText() 6");
+						labelText = "";
+						try {
+							log.debug("in CandidateImageFile.getLabelOCRText() 7");
+							labelText = o.getOCRText();
+							log.debug("in CandidateImageFile.getLabelOCRText() 8 labelText is " + labelText);
+						} catch (OCRReadException e) {
+							log.debug("in CandidateImageFile.getLabelOCRText() 9 OCRReadException");
+							log.error(e.getMessage());
+							e.printStackTrace();
+						}
 					}
 				} catch (Exception ex) { 
 					log.error("Exception thrown in OCR of unit tray label.");
@@ -760,7 +772,7 @@ public class CandidateImageFile {
 					log.trace(ex);
 					throw new OCRReadException(ex.getMessage());
 				}
-				if (labelText.equals("") ) { 
+				if ((labelText == null || labelText.equals("")) && aTemplate!=null && aTemplate.getTextPosition() != null) {  //this line throws an exception?!
 					try { 
 						// try again
 						int x = aTemplate.getTextPosition().width + 1;    
@@ -768,11 +780,14 @@ public class CandidateImageFile {
 						int w = aTemplate.getTextSize().width + 1;  
 						int h = aTemplate.getTextSize().height + 1;
 
+						log.debug("in CandidateImageFile.getLabelOCRText() 10");
 						// OCR and parse UnitTray Label
 						ConvertTesseractOCR o = new ConvertTesseractOCR(image.getSubimage(x, y, w, h));
 						labelText = "";
 						try {
+							log.debug("in CandidateImageFile.getLabelOCRText() 11");
 							labelText = o.getOCRText();
+							log.debug("in CandidateImageFile.getLabelOCRText() 12 labelText is " + labelText);
 						} catch (OCRReadException e) {
 							log.error(e.getMessage());
 							e.printStackTrace();
@@ -786,6 +801,7 @@ public class CandidateImageFile {
 				}
 			}
 		}
+		log.debug("in CandidateImageFile.getLabelOCRText() 13 labelText is " + labelText);
 		return labelText;
 	} 
 

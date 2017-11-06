@@ -79,6 +79,7 @@ public class SearchDialog extends JDialog {
 	private JTextField jTextFieldImageFilename = null;
 	private JComboBox jComboBoxPath = null;
 	private JComboBox jComboBoxEntryBy = null;
+	private JComboBox jComboBoxIdentifiedBy = null;
 	private JLabel jLabel10 = null;
 	private JTextField jTextFieldSubfamily = null;
 	private JLabel jLabel11 = null;
@@ -100,7 +101,13 @@ public class SearchDialog extends JDialog {
 	private JTextField jTextFieldPrimaryDivision = null;
 	private JTextField textFieldHigherGeog;
 	private JLabel lblHigherGeography;
+	
+	//allie change
+	private JLabel jLabel20 = null;
+	
 	/**
+	 * 
+	 * 
 	 * @param owner
 	 */
 	public SearchDialog(Frame owner) {
@@ -114,10 +121,10 @@ public class SearchDialog extends JDialog {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(460, 600);
+		this.setSize(460, 650);
 		this.setTitle("Search For Specimens");
 		this.setContentPane(getJContentPane());
-		this.setPreferredSize(new Dimension(460, 600));
+		this.setPreferredSize(new Dimension(460, 650));
 		this.pack();
 	}
 
@@ -257,6 +264,11 @@ public class SearchDialog extends JDialog {
 							searchCriteria.setTrackings(trackings);
 						}
 					}
+					if (jComboBoxIdentifiedBy.getSelectedItem()!=null) {
+						if (!jComboBoxIdentifiedBy.getSelectedItem().toString().equals("")) {
+							searchCriteria.setIdentifiedBy(jComboBoxIdentifiedBy.getSelectedItem().toString());
+						}
+					}					
 					if (jComboBoxQuestions.getSelectedItem()!=null) {
 						if (!jComboBoxQuestions.getSelectedItem().toString().equals("")) { 
 						   searchCriteria.setQuestions(jComboBoxQuestions.getSelectedItem().toString());
@@ -400,6 +412,14 @@ public class SearchDialog extends JDialog {
 			gridBagConstraints15.gridy = 20;
 			gridBagConstraints15.weightx = 1.0;
 			gridBagConstraints15.gridx = 1;
+			
+			//allie change
+			GridBagConstraints gridBagConstraints101 = new GridBagConstraints();
+			gridBagConstraints101.fill = GridBagConstraints.BOTH;
+			gridBagConstraints101.gridy = 21;
+			gridBagConstraints101.weightx = 1.0;
+			gridBagConstraints101.gridx = 1;
+			
 			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
 			gridBagConstraints14.insets = new Insets(0, 0, 5, 0);
 			gridBagConstraints14.fill = GridBagConstraints.BOTH;
@@ -419,6 +439,16 @@ public class SearchDialog extends JDialog {
 			gridBagConstraints12.gridy = 20;
 			jLabel9 = new JLabel();
 			jLabel9.setText("Entry By");
+			
+			//allie change
+			GridBagConstraints gridBagConstraints100 = new GridBagConstraints();
+			gridBagConstraints100.insets = new Insets(0, 0, 0, 5);
+			gridBagConstraints100.gridx = 0;
+			gridBagConstraints100.anchor = GridBagConstraints.NORTHEAST;
+			gridBagConstraints100.gridy = 21;
+			jLabel20 = new JLabel();
+			jLabel20.setText("Identified By");
+			
 			GridBagConstraints gridBagConstraints111 = new GridBagConstraints();
 			gridBagConstraints111.insets = new Insets(0, 0, 5, 5);
 			gridBagConstraints111.gridx = 0;
@@ -557,9 +587,17 @@ public class SearchDialog extends JDialog {
 			jPanel1.add(jLabel7, gridBagConstraints10);
 			jPanel1.add(jLabel8, gridBagConstraints111);
 			jPanel1.add(jLabel9, gridBagConstraints12);
+			
+			//allie change
+			jPanel1.add(jLabel20, gridBagConstraints100);
+			
 			jPanel1.add(getJTextField5(), gridBagConstraints13);
 			jPanel1.add(getJComboBox2(), gridBagConstraints14);
 			jPanel1.add(getJComboBox3(), gridBagConstraints15);
+			
+			//allie change
+			jPanel1.add(getIdentifiedByComboBox(), gridBagConstraints101);
+			
 			jPanel1.add(jLabel10, gridBagConstraints16);
 			jPanel1.add(getJTextField6(), gridBagConstraints22);
 			jPanel1.add(jLabel11, gridBagConstraints32);
@@ -577,7 +615,7 @@ public class SearchDialog extends JDialog {
 			jPanel1.add(jLabel18, gridBagConstraints110);
 			jPanel1.add(getJTextFieldTribe(), gridBagConstraints24);
 			jPanel1.add(jLabel19, gridBagConstraints25);
-			jPanel1.add(getJTextFieldPrimaryDivision(), gridBagConstraints34);
+			jPanel1.add(getJTextFieldPrimaryDivision(), gridBagConstraints34);			
 		}
 		return jPanel1;
 	}
@@ -714,6 +752,16 @@ public class SearchDialog extends JDialog {
 			jComboBoxEntryBy.setEditable(true);
 		}
 		return jComboBoxEntryBy;
+	}
+	
+	
+	private JComboBox getIdentifiedByComboBox() {
+		if (jComboBoxIdentifiedBy == null) {
+			SpecimenLifeCycle sls = new SpecimenLifeCycle();
+			jComboBoxIdentifiedBy = new JComboBox(sls.getDistinctDeterminers());
+			jComboBoxIdentifiedBy.setEditable(true);
+		}
+		return jComboBoxIdentifiedBy;
 	}
 
 	/**

@@ -804,7 +804,7 @@ public class MainFrame extends JFrame implements RunnerListener {
 	 * @param aMessage the message to display on the status bar.
 	 */
 	public void setStatusMessage(String aMessage) { 
-		int maxLength = 30;
+		int maxLength = 100;
 		if (aMessage.length()<maxLength) { maxLength = aMessage.length(); } 
 		jLabelStatus.setText("Status: " + aMessage.substring(0, maxLength));
 	}

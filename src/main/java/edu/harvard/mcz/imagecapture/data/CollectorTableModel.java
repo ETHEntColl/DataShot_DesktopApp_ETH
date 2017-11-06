@@ -83,7 +83,11 @@ public class CollectorTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public int getRowCount() {
-		return collectors.size();
+		//allie fix
+		if (collectors == null)
+			return 0;
+		else
+			return collectors.size();
 	}
 
 	/* (non-Javadoc)
@@ -111,10 +115,19 @@ public class CollectorTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(Object value, int rowIndex, int columnIndex) {
 		try {
-		((Collector)collectors.toArray()[rowIndex]).setCollectorName((String)value);
-		} catch (ClassCastException e) { 
+			//Original code from Paul - caused issues
+			//((Collector)collectors.toArray()[rowIndex]).setCollectorName((String)value);
+			//this fixes the problem with not being able to mouse into the new fields!! but need to find a way to access
+			//the value that was just typed and so far i can't do that...
+			
+			//allie change
+			((Collector)collectors.toArray()[rowIndex]).setCollectorName(value.toString());
+			
+		} catch (Exception e) { 
+			log.debug("Exception found in CollectorTableModel.setValueAt: unable to get or convert value");
+			//Original code from Paul - caused issues
 			// Object is an agentname not a string.
-		    ((Collector)collectors.toArray()[rowIndex]).setCollectorName(((MCZbaseAuthAgentName)value).getAgent_name());
+		    //((Collector)collectors.toArray()[rowIndex]).setCollectorName(((MCZbaseAuthAgentName)value).getAgent_name());
 		}
 	}
 

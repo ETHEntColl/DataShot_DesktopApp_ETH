@@ -452,37 +452,42 @@ public class JobSingleBarcodeScan implements RunnableJob, Runnable {
 								s.setFamily("");
 								// Look up likely matches for the OCR of the higher taxa in the HigherTaxon authority file.
 								HigherTaxonLifeCycle hls = new HigherTaxonLifeCycle();
-								if (parser.getTribe().trim().equals("")) {	
-									if (hls.isMatched(parser.getFamily(), parser.getSubfamily()))  {
-										// If there is a match, use it.
-										String[] higher = hls.findMatch(parser.getFamily(), parser.getSubfamily());
-										s.setFamily(higher[0]);
-										s.setSubfamily(higher[1]);
+								
+								if(parser != null){ //allie edit one line
+								
+									if (parser.getTribe().trim().equals("")) {	
+										if (hls.isMatched(parser.getFamily(), parser.getSubfamily()))  {
+											// If there is a match, use it.
+											String[] higher = hls.findMatch(parser.getFamily(), parser.getSubfamily());
+											s.setFamily(higher[0]);
+											s.setSubfamily(higher[1]);
+										} else { 
+											// otherwise use the raw OCR output.
+											s.setFamily(parser.getFamily());
+											s.setSubfamily(parser.getSubfamily());
+										}
+										s.setTribe("");
 									} else { 
-										// otherwise use the raw OCR output.
-										s.setFamily(parser.getFamily());
-										s.setSubfamily(parser.getSubfamily());
+										if (hls.isMatched(parser.getFamily(), parser.getSubfamily(),parser.getTribe()))  {
+											String[] higher = hls.findMatch(parser.getFamily(), parser.getSubfamily(),parser.getTribe());
+											s.setFamily(higher[0]);
+											s.setSubfamily(higher[1]);
+											s.setTribe(higher[2]);
+										} else { 
+											s.setFamily(parser.getFamily());
+											s.setSubfamily(parser.getSubfamily());
+											s.setTribe(parser.getTribe());
+										}					
 									}
-									s.setTribe("");
-								} else { 
-									if (hls.isMatched(parser.getFamily(), parser.getSubfamily(),parser.getTribe()))  {
-										String[] higher = hls.findMatch(parser.getFamily(), parser.getSubfamily(),parser.getTribe());
-										s.setFamily(higher[0]);
-										s.setSubfamily(higher[1]);
-										s.setTribe(higher[2]);
-									} else { 
-										s.setFamily(parser.getFamily());
-										s.setSubfamily(parser.getSubfamily());
-										s.setTribe(parser.getTribe());
-									}					
-								}
-								if (!parser.getFamily().equals(""))  {
-									// check family against database (with a soundex match)
-									String match = hls.findMatch(parser.getFamily()); 
-									if (match!=null && !match.trim().equals("")) { 
-										s.setFamily(match);
+									if (!parser.getFamily().equals(""))  {
+										// check family against database (with a soundex match)
+										String match = hls.findMatch(parser.getFamily()); 
+										if (match!=null && !match.trim().equals("")) { 
+											s.setFamily(match);
+										}
 									}
-								}
+									
+								} //end if allie edit
 							}
 							// trim family to fit (in case multiple parts of taxon name weren't parsed
 							// and got concatenated into family field.
@@ -490,19 +495,24 @@ public class JobSingleBarcodeScan implements RunnableJob, Runnable {
 								s.setFamily(s.getFamily().substring(0,40));
 							}
 							
-							s.setGenus(parser.getGenus());
-							s.setSpecificEpithet(parser.getSpecificEpithet());
-							s.setSubspecificEpithet(parser.getSubspecificEpithet());
-							s.setInfraspecificEpithet(parser.getInfraspecificEpithet());
-							s.setInfraspecificRank(parser.getInfraspecificRank());
-							s.setAuthorship(parser.getAuthorship());
-							s.setDrawerNumber(((DrawerNameReturner)parser).getDrawerNumber());
-							s.setCollection(((CollectionReturner)parser).getCollection());
-							s.setCreatingPath(ImageCaptureProperties.getPathBelowBase(fileToCheck));
-							s.setCreatingFilename(fileToCheck.getName());
-							if (parser.getIdentifiedBy()!=null && parser.getIdentifiedBy().length()>0) {
-								s.setIdentifiedBy(parser.getIdentifiedBy());
-							}							
+							if(parser != null){ //allie edit one line
+							
+								s.setGenus(parser.getGenus());
+								s.setSpecificEpithet(parser.getSpecificEpithet());
+								s.setSubspecificEpithet(parser.getSubspecificEpithet());
+								s.setInfraspecificEpithet(parser.getInfraspecificEpithet());
+								s.setInfraspecificRank(parser.getInfraspecificRank());
+								s.setAuthorship(parser.getAuthorship());
+								s.setDrawerNumber(((DrawerNameReturner)parser).getDrawerNumber());
+								s.setCollection(((CollectionReturner)parser).getCollection());
+								s.setCreatingPath(ImageCaptureProperties.getPathBelowBase(fileToCheck));
+								s.setCreatingFilename(fileToCheck.getName());
+								if (parser.getIdentifiedBy()!=null && parser.getIdentifiedBy().length()>0) {
+									s.setIdentifiedBy(parser.getIdentifiedBy());
+								}
+							
+							} //end allie edit one line
+							
 							log.debug(s.getCollection());
 
 							// TODO: non-general workflows
@@ -553,7 +563,7 @@ public class JobSingleBarcodeScan implements RunnableJob, Runnable {
 									// Drawer number with length limit (and specimen that fails to save at over this length makes
 									// a good canary for labels that parse very badly.
 									String badParse = "";
-									if (((DrawerNameReturner)parser).getDrawerNumber().length()>MetadataRetriever.getFieldLength(Specimen.class, "DrawerNumber")) {
+									if (parser!= null && ((DrawerNameReturner)parser).getDrawerNumber().length()>MetadataRetriever.getFieldLength(Specimen.class, "DrawerNumber")) {
 										badParse = "Parsing problem. \nDrawer number is too long: " + s.getDrawerNumber() + "\n";
 									}
 									JOptionPane.showMessageDialog(Singleton.getSingletonInstance().getMainFrame(), 
@@ -567,11 +577,13 @@ public class JobSingleBarcodeScan implements RunnableJob, Runnable {
 									// Cause of exception is not likely to be drawer number now that drawer number
 									// length is enforced in Specimen.setDrawerNumber, but the text returned by the parser
 									// might indicate very poor OCR as a cause.
-									String badParse = ((DrawerNameReturner)parser).getDrawerNumber();
-									JOptionPane.showMessageDialog(Singleton.getSingletonInstance().getMainFrame(), 
-											filename + " " + barcode + "\n" + badParse + e.getMessage(), 
-											"Save Failed", 
-											JOptionPane.ERROR_MESSAGE);
+									if(parser != null){
+										String badParse = ((DrawerNameReturner)parser).getDrawerNumber();
+										JOptionPane.showMessageDialog(Singleton.getSingletonInstance().getMainFrame(), 
+												filename + " " + barcode + "\n" + badParse + e.getMessage(), 
+												"Save Failed", 
+												JOptionPane.ERROR_MESSAGE);
+									}
 									s = null;
 								}
 							}
@@ -585,7 +597,9 @@ public class JobSingleBarcodeScan implements RunnableJob, Runnable {
 							tryMe.setDrawerNumber(exifComment);
 						} else { 
 							tryMe.setRawExifBarcode(exifComment);
-							tryMe.setDrawerNumber(((DrawerNameReturner)parser).getDrawerNumber());
+							if(parser != null){
+								tryMe.setDrawerNumber(((DrawerNameReturner)parser).getDrawerNumber());
+							}
 						}
 						tryMe.setRawOcr(rawOCR);
 						tryMe.setTemplateId(defaultTemplate.getTemplateId());
@@ -644,7 +658,9 @@ public class JobSingleBarcodeScan implements RunnableJob, Runnable {
 							existing.setPath(path);
 						}
 						if (existing.getDrawerNumber()==null || existing.getDrawerNumber().equals("")) { 
-							existing.setDrawerNumber(((DrawerNameReturner)parser).getDrawerNumber());
+							if(parser != null){
+								existing.setDrawerNumber(((DrawerNameReturner)parser).getDrawerNumber());
+							}
 						}
 						try {
 							imageCont.attachDirty(existing);

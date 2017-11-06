@@ -125,7 +125,7 @@ public class SpecimenControler {
 		boolean result = false;
 		if (inTable && model!=null && currentRow > -1) {
 			try { 
-				Specimen temp =(Specimen) model.getValueAt(table.convertRowIndexToModel(currentRow+1), 0); 
+				Specimen temp = (Specimen) model.getValueAt(table.convertRowIndexToModel(currentRow+1), 0); 
 				if (temp!=null) { 
 			       specimen = (Specimen) model.getValueAt(table.convertRowIndexToModel(currentRow+1), 0); 
 				}

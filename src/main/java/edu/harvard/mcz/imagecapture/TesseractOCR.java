@@ -97,24 +97,39 @@ public class TesseractOCR implements OCR {
 	public String getOCRText() throws OCRReadException {
 		StringBuffer result = new StringBuffer();
 		BufferedReader resultReader = null;
+		log.debug("in TesseractOCR.getOCRText() 1");
 		try
 		{            
+			log.debug("in TesseractOCR.getOCRText() 2");
 			Runtime r = Runtime.getRuntime();
+			log.debug("in TesseractOCR.getOCRText() 3");
 
 			// Run tesseract to OCR the target file.
 			String runCommand = Singleton.getSingletonInstance().getProperties().getProperties().getProperty(ImageCaptureProperties.KEY_TESSERACT_EXECUTABLE)   
 			+ target + " " + tempFileBase + " " +  language;
+			log.debug("in TesseractOCR.getOCRText() 4");
+
 			Process proc = r.exec(runCommand);
+			log.debug("in TesseractOCR.getOCRText() 5");
+
 			System.out.println(runCommand);
+			log.debug("in TesseractOCR.getOCRText() 6 runCommand is " + runCommand);
+
 
 			// Create and start a reader for the error stream
 			StreamReader errorReader = new StreamReader(proc.getErrorStream(), "ERROR");            
 			errorReader.run();
 
+			log.debug("in TesseractOCR.getOCRText() 7");
+
+			
 			// run the process and wait for the exit value
 			int exitVal = proc.waitFor();
 
 			System.out.println("Tesseract Exit Value: " + exitVal);
+			
+			log.debug("in TesseractOCR.getOCRText() 8 exitVal is " + exitVal);
+
 
 			if (exitVal==0) { 
 				resultReader = new BufferedReader(
@@ -131,7 +146,7 @@ public class TesseractOCR implements OCR {
 			} else {
 				throw new OCRReadException("OCR process failed (exit value>0).");
 			}
-			
+			log.debug("in TesseractOCR.getOCRText() 9");
 			if (result.length() > 0) { 
 				String resString = result.toString();
 				// $ is returned by tesseract to indicate italics
@@ -156,7 +171,7 @@ public class TesseractOCR implements OCR {
 				} 
 			}   
 		}
-
+		log.debug("in TesseractOCR.getOCRText() 10 result is " + result.toString());
 		log.debug(result.toString());
 		return result.toString();
 	}

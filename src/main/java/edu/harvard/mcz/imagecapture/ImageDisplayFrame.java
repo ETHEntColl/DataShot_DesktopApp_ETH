@@ -47,7 +47,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -224,8 +226,13 @@ public class ImageDisplayFrame extends JFrame {
 		boolean templateProblem = false;
 		selectedImage = image;
 		//TODO: template detection
+		
 		try {
+			//allie fix
+			//ImageIO.setUseCache(false);
+			
 			imagefile = ImageIO.read(anImageFile);
+						
 			log.debug(anImageFile.getPath());
 			// Display the full image
 			this.setFullImage();
@@ -271,7 +278,7 @@ public class ImageDisplayFrame extends JFrame {
 					templateProblem = true;
 					System.out.println(ex.getMessage());	
 				}			
-				try { 
+				try {
 					int x = defaultTemplate.getLabelPosition().width;    
 					int y =  defaultTemplate.getLabelPosition().height; 
 					int w = defaultTemplate.getLabelSize().width;  
@@ -302,15 +309,22 @@ public class ImageDisplayFrame extends JFrame {
 					System.out.println(ex.getMessage());	
 				}
 			}
+			//allie fix
+			//imagefile.flush();
+			//imagefile = null;
 		} catch (IOException e1) {
+			log.debug("IOException!");
 			System.out.println("Error reading image file: " + e1.getMessage());
 			throw new ImageLoadException("Unable to read image file " + anImageFile.getPath() + " " + e1.getMessage());
+		} catch (Exception e){
+			log.debug("Image loading exception");
+			e.printStackTrace();
 		}
 		if (templateProblem) { 
 			throw new BadTemplateException("Template doesn't fit file " + anImageFile.getPath());
 		}
 		log.debug(anImageFile.getPath());
-		if (UsersLifeCycle.isUserChiefEditor(Singleton.getSingletonInstance().getUser().getUserid())) { 
+		if (UsersLifeCycle.isUserChiefEditor(Singleton.getSingletonInstance().getUser().getUserid())) {
 		    updateTemplateList();
 		}
 	}
@@ -706,7 +720,13 @@ public class ImageDisplayFrame extends JFrame {
 									boolean found = false;
 									while (ii.hasNext() && !found) { 
 										ICImage image = ii.next();
-										if (image.getSpecimen()!=null  && !image.getSpecimen().getBarcode().equals(targetSpecimen.getBarcode())) { 
+										log.debug("image is " + image);
+										log.debug("image specimen is " + image.getSpecimen());
+										log.debug("image path is " + image.getPath());
+										log.debug("target specimen bar code is " + targetSpecimen.getBarcode());
+										log.debug("image specimen barcode is " + image.getSpecimen().getBarcode());
+										//allie fix - added !image.getPath().equals("")
+										if (!image.getPath().equals("") && image.getPath().toUpperCase().contains(".JPG") && image.getSpecimen()!=null  && !image.getSpecimen().getBarcode().equals(targetSpecimen.getBarcode())) { 
 											// same filename, but wrong path.
 											log.debug("WrongFile: " + image.getPath());
 										} else { 

@@ -56,7 +56,8 @@ public class UnitTrayLabelParser implements TaxonNameReturner, DrawerNameReturne
 		text = aStringToParse;
 	    log.debug(aStringToParse);
 	    boolean done = false;
-	    if (aStringToParse.endsWith("}") && aStringToParse.startsWith("{")) { 
+	    //allie edit
+	    if (aStringToParse != null && aStringToParse.endsWith("}") && aStringToParse.startsWith("{")) { 
 	    	if (parseFromJSON(aStringToParse)) { 
 	    		done = true;
 	    	}

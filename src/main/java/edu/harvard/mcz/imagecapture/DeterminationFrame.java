@@ -197,8 +197,10 @@ public class DeterminationFrame extends JFrame {
 				jTableDeterminations.setModel(determinations);
 			}
 			
-			FilteringAgentJComboBox field = new FilteringAgentJComboBox();
-			jTableDeterminations.getColumnModel().getColumn(DeterminationTableModel.ROW_IDENTIFIEDBY).setCellEditor(new ComboBoxCellEditor(field));
+			//allie change 
+			//here is where the select field is set for determiner!!!
+			//FilteringAgentJComboBox field = new FilteringAgentJComboBox();
+			//jTableDeterminations.getColumnModel().getColumn(DeterminationTableModel.ROW_IDENTIFIEDBY).setCellEditor(new ComboBoxCellEditor(field));
 			
 			setTableColumnEditors();
 			
@@ -296,6 +298,7 @@ public class DeterminationFrame extends JFrame {
 			jButtonAdd.setMnemonic(KeyEvent.VK_A);
 			jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
+					log.debug("getJButtonAdd: adding row.....");
 					if (specimen!=null) { 
 					   if (jTableDeterminations.isEditing()) { 
 						   jTableDeterminations.getCellEditor().stopCellEditing();

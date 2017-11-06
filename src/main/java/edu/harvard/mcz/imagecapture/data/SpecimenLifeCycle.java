@@ -9,8 +9,10 @@ package edu.harvard.mcz.imagecapture.data;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -166,7 +168,9 @@ public class SpecimenLifeCycle {
 	public void attachClean(Specimen instance) {
 		try { 
 			log.debug(instance.getSpecimenParts().size());
+			log.debug("crashes here? 3");
 		    log.debug(((SpecimenPart)instance.getSpecimenParts().toArray()[0]).getPartAttributeValuesConcat());
+		    log.debug("crashes here? 4");
 		} catch (Exception e) {
 			 log.debug(e.getMessage());
 		} 
@@ -198,7 +202,9 @@ public class SpecimenLifeCycle {
 		}				
 		try { 
 		    log.debug(instance.getSpecimenParts().size());
+		    log.debug("crashes here? 5");
 		    log.debug(((SpecimenPart)instance.getSpecimenParts().toArray()[0]).getPartAttributeValuesConcat());
+		    log.debug("crashes here? 6");
 		} catch (Exception e) { 
 			log.debug(e.getMessage());
 		}
@@ -380,7 +386,9 @@ public class SpecimenLifeCycle {
 for (int i=0; i<results.size(); i++) { 		    
    try {
       log.debug("Parts: " + results.get(i).getSpecimenParts().size());
+      log.debug("crashes here? 7");
       log.debug("Parts: " + ((SpecimenPart)results.get(i).getSpecimenParts().toArray()[0]).getPartAttributeValuesConcat());
+      log.debug("crashes here? 8");
       log.debug("Part Attribute: " + ((SpecimenPartAttribute)((SpecimenPart)results.get(i).getSpecimenParts().toArray()[0]).getAttributeCollection().toArray()[0]).getSpecimenPartAttributeId());
    } catch (Exception e) {
 	   log.debug(e.getMessage());
@@ -730,8 +738,78 @@ for (int i=0; i<results.size(); i++) {
 			log.error(re);
 			return new String[]{};
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String[] getDistinctDeterminers() { 
+		ArrayList<String> collections = new ArrayList<String>();
+		collections.add("");    // put blank at top of list.
+		try {
+			String sql = "Select distinct identifiedBy from Specimen spe where spe.identifiedBy is not null order by spe.identifiedBy  ";
+			//String sql = "Select distinct identifiedby from Specimen";
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			try { 
+				session.beginTransaction();
+				Query q = session.createQuery(sql);
+				Iterator i = q.iterate();
+				while (i.hasNext()) { 
+					String value = (String)i.next();
+					// add, only if value isn't the "" put at top of list above.
+					if (!value.equals("")) {  
+					    collections.add(value.trim());
+					} 
+				}
+				session.getTransaction().commit();
+			} catch (HibernateException e) { 
+				e.printStackTrace();
+				session.getTransaction().rollback();
+				log.error(e.getMessage());
+			}
+			try { session.close(); } catch (SessionException e) { }
+			String[] result = (String[]) collections.toArray(new String[]{});
+			return result;
+		} catch (RuntimeException re) {
+			log.error(re);
+			return new String[]{};
+		}
+	}
+		
+	
+	@SuppressWarnings("unchecked")
+	public String[] getDistinctPrimaryDivisions() { 
+		ArrayList<String> collections = new ArrayList<String>();
+		collections.add("");    // put blank at top of list.
+		try {
+			String sql = "Select distinct primaryDivison from Specimen spe where spe.primaryDivison is not null order by spe.primaryDivison  ";
+			//String sql = "Select distinct identifiedby from Specimen";
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			try { 
+				session.beginTransaction();
+				Query q = session.createQuery(sql);
+				Iterator i = q.iterate();
+				while (i.hasNext()) { 
+					String value = (String)i.next();
+					// add, only if value isn't the "" put at top of list above.
+					if (!value.equals("")) {  
+					    collections.add(value.trim());
+					} 
+				}
+				session.getTransaction().commit();
+			} catch (HibernateException e) { 
+				e.printStackTrace();
+				session.getTransaction().rollback();
+				log.error(e.getMessage());
+			}
+			try { session.close(); } catch (SessionException e) { }
+			String[] result = (String[]) collections.toArray(new String[]{});
+			return result;
+		} catch (RuntimeException re) {
+			log.error(re);
+			return new String[]{};
+		}
 	}	
-
+	
+	
 	@SuppressWarnings("unchecked")
 	public String[] getDistinctQuestions() { 
 		ArrayList<String> collections = new ArrayList<String>();

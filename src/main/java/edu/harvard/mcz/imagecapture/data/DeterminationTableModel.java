@@ -208,7 +208,8 @@ public class DeterminationTableModel extends AbstractTableModel {
 		    ((Determination)determinations.toArray()[rowIndex]).setTypeStatus((String)value);
 		    break;
 		case ROW_IDENTIFIEDBY: 
-		    ((Determination)determinations.toArray()[rowIndex]).setIdentifiedBy(((MCZbaseAuthAgentName)value).getAgent_name());
+		    //((Determination)determinations.toArray()[rowIndex]).setIdentifiedBy(((MCZbaseAuthAgentName)value).getAgent_name());
+			((Determination)determinations.toArray()[rowIndex]).setIdentifiedBy((String)value);
 		    break;	
 		case 9: 
 		    ((Determination)determinations.toArray()[rowIndex]).setUnNamedForm((String)value);
