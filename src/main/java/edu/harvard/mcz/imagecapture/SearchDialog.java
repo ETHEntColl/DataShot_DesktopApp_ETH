@@ -98,7 +98,8 @@ public class SearchDialog extends JDialog {
 	private JLabel jLabel18 = null;
 	private JTextField jTextFieldTribe = null;
 	private JLabel jLabel19 = null;
-	private JTextField jTextFieldPrimaryDivision = null;
+	//private JTextField jTextFieldPrimaryDivision = null;
+	private JComboBox jComboBoxPrimaryDivision = null;
 	private JTextField textFieldHigherGeog;
 	private JLabel lblHigherGeography;
 	
@@ -206,9 +207,9 @@ public class SearchDialog extends JDialog {
 					if (jTextFieldVerbatimLocality.getText()!=null && jTextFieldVerbatimLocality.getText().length() > 0) { 
 						searchCriteria.setVerbatimLocality(jTextFieldVerbatimLocality.getText());
 					}
-					if (jTextFieldPrimaryDivision.getText()!=null && jTextFieldPrimaryDivision.getText().length() > 0) { 
+					/*if (jTextFieldPrimaryDivision.getText()!=null && jTextFieldPrimaryDivision.getText().length() > 0) { 
 						searchCriteria.setPrimaryDivison(jTextFieldPrimaryDivision.getText());
-					}
+					}*/
 					if (jComboBoxWorkflowStatus.getSelectedItem()!=null) {
 						if (!jComboBoxWorkflowStatus.getSelectedItem().toString().equals("")) { 
 						   searchCriteria.setWorkFlowStatus(jComboBoxWorkflowStatus.getSelectedItem().toString());
@@ -220,6 +221,15 @@ public class SearchDialog extends JDialog {
 						   searchCriteria.setCountry(jComboBoxCountry.getSelectedItem().toString());
 						}
 					}
+					
+					//allie change
+					if (jComboBoxPrimaryDivision.getSelectedItem()!=null) {
+						if (!jComboBoxPrimaryDivision.getSelectedItem().toString().equals("")) { 
+						   searchCriteria.setCountry(jComboBoxPrimaryDivision.getSelectedItem().toString());
+						}
+					}
+					//end allie change
+					
 					if (jComboBoxCollector.getSelectedItem()!=null) {
 						if (!jComboBoxCollector.getSelectedItem().toString().equals("")) {
 							Collector c = new Collector();
@@ -615,7 +625,7 @@ public class SearchDialog extends JDialog {
 			jPanel1.add(jLabel18, gridBagConstraints110);
 			jPanel1.add(getJTextFieldTribe(), gridBagConstraints24);
 			jPanel1.add(jLabel19, gridBagConstraints25);
-			jPanel1.add(getJTextFieldPrimaryDivision(), gridBagConstraints34);			
+			jPanel1.add(getJComboBoxPrimaryDivision(), gridBagConstraints34);			
 		}
 		return jPanel1;
 	}
@@ -855,6 +865,27 @@ public class SearchDialog extends JDialog {
 	}
 
 	/**
+	 * This method initializes jComboBox	
+	 * 	
+	 * @return javax.swing.JComboBox	
+	 */
+	private JComboBox getJComboBoxPrimaryDivision() {
+		if (jComboBoxPrimaryDivision == null) {
+			SpecimenLifeCycle sls = new SpecimenLifeCycle();
+			ArrayList<String> values = new ArrayList<String>();
+			values.add(""); 
+			values.add("%_%");
+			String[] cv = sls.getDistinctPrimaryDivisions();
+			for (int x=0; x<cv.length; x++) { 
+				values.add(cv[x]);
+			}
+			jComboBoxPrimaryDivision = new JComboBox(values.toArray());
+			jComboBoxPrimaryDivision.setEditable(true);
+		}
+		return jComboBoxPrimaryDivision;
+	}	
+	
+	/**
 	 * This method initializes jComboBox1	
 	 * 	
 	 * @return javax.swing.JComboBox	
@@ -892,12 +923,12 @@ public class SearchDialog extends JDialog {
 	 * 	
 	 * @return javax.swing.JTextField	
 	 */
-	private JTextField getJTextFieldPrimaryDivision() {
+	/*private JTextField getJTextFieldPrimaryDivision() {
 		if (jTextFieldPrimaryDivision == null) {
 			jTextFieldPrimaryDivision = new JTextField();
 		}
 		return jTextFieldPrimaryDivision;
-	}
+	}*/
 
 	private JTextField getTextFieldHigherGeog() {
 		if (textFieldHigherGeog == null) {
