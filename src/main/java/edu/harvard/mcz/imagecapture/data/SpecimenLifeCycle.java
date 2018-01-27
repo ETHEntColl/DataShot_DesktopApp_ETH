@@ -285,6 +285,32 @@ public class SpecimenLifeCycle {
 			throw re;
 		}
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Specimen> findByBarcode(String barcode) {
+		log.debug("findByBarcode start");
+		try {
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			session.beginTransaction();
+			List<Specimen> results = null;
+			try { 
+				Query query  =  session.createQuery("From Specimen as s where s.barcode = ?");
+				query.setParameter(0, barcode);
+				results = (List<Specimen>) query.list();				
+			    log.debug("find query successful, result size: " + results.size());
+			    session.getTransaction().commit();			    
+		    } catch (HibernateException e) {
+		    	session.getTransaction().rollback();
+		    	log.error("findByBarcode failed", e);	
+		    }
+		    try { session.close(); } catch (SessionException e) { }
+			return results;
+		} catch (RuntimeException re) {
+			log.error("findByBarcode failed.  ", re);
+			throw re;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<Specimen> findAll() {
@@ -706,6 +732,66 @@ for (int i=0; i<results.size(); i++) {
 			log.error(re);
 			return new String[]{};
 		}
+	}
+	
+	public int deleteSpecimenByBarcode(String barcode){
+		log.debug("Deleting record with barcode " + barcode);
+		List<Specimen> specimens = findByBarcode(barcode);
+		if(specimens.size() == 0){
+			return 0; //specimen not found
+		}
+		else if(specimens.size() >= 1){
+			Specimen specimen = specimens.get(0);
+			
+			//this does not work - need to do it manually as below!!
+			//this.delete(specimen);
+			
+			long specimenId = specimen.getSpecimenId();
+			try {
+				Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+				session.beginTransaction();
+				try { 
+					Query query = session.createSQLQuery("delete from Tracking where SpecimenId=?");
+					query.setParameter(0, specimenId);
+					query.executeUpdate();	
+					
+					query = session.createSQLQuery("delete from LAT_LONG where specimenid=?");
+					query.setParameter(0, specimenId);
+					query.executeUpdate();
+					
+					query = session.createSQLQuery("delete from Image where SpecimenId=?");
+					query.setParameter(0, specimenId);
+					query.executeUpdate();
+					
+					query = session.createSQLQuery("delete from Specimen_Part where SpecimenId=?");
+					query.setParameter(0, specimenId);
+					query.executeUpdate();			
+					
+					query = session.createSQLQuery("delete from Specimen where SpecimenId=?");
+					query.setParameter(0, specimenId);
+					query.executeUpdate();	
+					
+				    session.getTransaction().commit();			    
+			    } catch (HibernateException e) {
+			    	session.getTransaction().rollback();
+			    	log.error("findByBarcode failed Hibernate Exception", e);	
+			    }
+				catch (Exception e) {
+			    	session.getTransaction().rollback();
+			    	log.error("findByBarcode failed general Exception", e);	
+			    }
+			    try { session.close(); } catch (SessionException e) { }
+			} catch (RuntimeException re) {
+				log.error("findByBarcode failed.  ", re);
+				throw re;
+			}	
+		}
+		List<Specimen> specimensAfterDelete = findByBarcode(barcode);
+		if(specimensAfterDelete.size() == 0){
+			return 1; //success
+		}
+		return 2; //delete failed for unknown reason
+			
 	}
 	
 	@SuppressWarnings("unchecked")

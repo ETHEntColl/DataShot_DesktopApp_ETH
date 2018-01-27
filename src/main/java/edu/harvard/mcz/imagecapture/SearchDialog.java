@@ -225,7 +225,7 @@ public class SearchDialog extends JDialog {
 					//allie change
 					if (jComboBoxPrimaryDivision.getSelectedItem()!=null) {
 						if (!jComboBoxPrimaryDivision.getSelectedItem().toString().equals("")) { 
-						   searchCriteria.setCountry(jComboBoxPrimaryDivision.getSelectedItem().toString());
+						   searchCriteria.setPrimaryDivison(jComboBoxPrimaryDivision.getSelectedItem().toString());
 						}
 					}
 					//end allie change

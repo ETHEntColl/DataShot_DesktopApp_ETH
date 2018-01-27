@@ -62,19 +62,24 @@ public class Number implements java.io.Serializable {
 		this.numberType = numberType;
 	}
 
-    public static List<String> getNumberTypeValues() {
+	//New: add “GBIFCH barcode tag”; “CSCF barcode tag”; “Swiss Grid”
+    //New: remove “MCZ Slide number”; “Drawer number”; “Lycaenidae Morphology Ref.”; “MCZ Butterfly Exhibit, 2000”.
+	public static List<String> getNumberTypeValues() {
     	List<String> result = new ArrayList<String>();
     	result.add("");
     	result.add("Unknown");
     	result.add("Species Number");
     	result.add("Collector Number");
     	result.add("Collection Number");
-    	result.add("MCZ Slide Number");
+    	//result.add("MCZ Slide Number");
     	result.add("Genitalia Preparation");
     	result.add("DNA Sample Number");
-    	result.add("Drawer Number");
-    	result.add("Lycaenidae Morphology Ref.");
-    	result.add("MCZ Butterfly Exhibit, 2000");
+    	//result.add("Drawer Number");
+    	//result.add("Lycaenidae Morphology Ref.");
+    	//result.add("MCZ Butterfly Exhibit, 2000");
+    	result.add("GBIFCH barcode tag");
+    	result.add("CSCF barcode tag");
+    	result.add("Swiss Grid coordinates");
     	return result;
 	}
 	

@@ -20,11 +20,13 @@
 package edu.harvard.mcz.imagecapture;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import java.awt.BorderLayout;
@@ -110,6 +112,7 @@ public class MainFrame extends JFrame implements RunnerListener {
 	private JMenu jMenuHelp = null;
 	private JMenuItem jMenuItemAbout = null;
 	private JMenuItem jMenuItemPreprocess = null;
+	private JMenuItem jMenuItemDelete = null;
 	private JMenuItem jMenuItemLoadData = null;
 	private JMenuItem jMenuItemVersion = null;
 	private JMenuItem jMenuItemScanOneBarcode = null;
@@ -241,6 +244,7 @@ public class MainFrame extends JFrame implements RunnerListener {
 			jMenuAction.setEnabled(false);
 			jMenuItemUsers.setEnabled(false);
 			jMenuItemPreprocess.setEnabled(false);
+			jMenuItemDelete.setEnabled(false);
 			jMenuItemLoadData.setEnabled(false);
 			jMenuItemPreprocessOneDir.setEnabled(false);
 			jMenuItemCreateLabels.setEnabled(true);
@@ -274,6 +278,7 @@ public class MainFrame extends JFrame implements RunnerListener {
 					jMenuAction.setEnabled(true);
 					jMenuItemPreprocessOneDir.setEnabled(true);
 					jMenuConfig.setEnabled(true);
+					jMenuItemDelete.setEnabled(true);
 					jMenuItemPreferences.setEnabled(true);
 					jMenuQualityControl.setEnabled(true);
 					jMenuItemQCBarcodes.setEnabled(true);
@@ -419,6 +424,7 @@ public class MainFrame extends JFrame implements RunnerListener {
 			jMenuAction.add(getJMenuItemScanOneBarcodeSave());
 			jMenuAction.add(getJMenuItemPreprocess());
 			jMenuAction.add(getJMenuItemPreprocessOne());
+			jMenuAction.add(getJMenuItemDelete());
 			jMenuAction.add(getJMenuItemRedoOCROne());
 			jMenuAction.add(getJMenuItemRepeatOCR());
 			jMenuAction.add(getJMenuItemRecheckTemplates());
@@ -502,6 +508,40 @@ public class MainFrame extends JFrame implements RunnerListener {
 		}
 		return jMenuItemPreprocess;
 	}
+	
+	
+	private JMenuItem getJMenuItemDelete() {
+		if (jMenuItemDelete == null) {
+			jMenuItemDelete = new JMenuItem();
+			jMenuItemDelete.setText("Delete a specimen record");
+			jMenuItemDelete.setEnabled(true);
+			jMenuItemDelete.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					JTextField barcode = new JTextField();
+					final JComponent[] inputs = new JComponent[] {
+					        new JLabel("Please enter the barcode of the specimen record you would like to delete:"),
+					        barcode
+					};
+					int result = JOptionPane.showConfirmDialog(null, inputs, "Delete a specimen record", JOptionPane.CANCEL_OPTION);
+					if (result==JOptionPane.YES_OPTION) { 
+						String barcodeEntered = barcode.getText();
+						SpecimenLifeCycle sls = new SpecimenLifeCycle();
+						int delete_result = sls.deleteSpecimenByBarcode(barcodeEntered);
+						if(delete_result == 0){
+							JOptionPane.showConfirmDialog(null, "Error: specimen record not found.", "Delete specimen record", JOptionPane.PLAIN_MESSAGE);
+						}
+						else if(delete_result == 1){
+							JOptionPane.showConfirmDialog(null, "Specimen has been deleted successfully.", "Delete specimen record", JOptionPane.PLAIN_MESSAGE);
+						}else{
+							JOptionPane.showConfirmDialog(null, "Error: delete failed.", "Delete specimen record", JOptionPane.PLAIN_MESSAGE);
+						}
+					}
+				}
+			});
+		}
+		return jMenuItemDelete;
+	}
+	
 	
 	private JMenuItem getJMenuItemLoadData() {
 		if (jMenuItemLoadData == null) {

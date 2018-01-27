@@ -382,7 +382,7 @@ public class GeoreferenceDialog extends JDialog {
 		
 		@SuppressWarnings("unchecked")
 		ComboBoxModel<String> methodModel = new ListComboBoxModel<String>(LatLong.getGeorefMethodValues());
-		cbMethod = new JComboBox<String>(new DefaultComboBoxModel(new String[] {"not recorded", "unknown", "GEOLocate", "Geoportal", "Google Earth", "Google Maps", "Gazeteer", "GPS", "MaNIS/HertNet/ORNIS Georeferencing Guidelines", "Wikipedia"}));
+		cbMethod = new JComboBox<String>(new DefaultComboBoxModel(new String[] {"not recorded", "unknown", "GEOLocate", "Geoportal", "Google Earth", "Google Maps", "Gazeteer", "GPS", "Label Data", "Wikipedia"}));
 		cbMethod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setState();

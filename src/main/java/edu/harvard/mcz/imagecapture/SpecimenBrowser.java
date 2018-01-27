@@ -165,8 +165,6 @@ public class SpecimenBrowser extends JPanel implements DataChangeListener {
 			jTable.setModel(model); 
 			sorter = new TableRowSorter<SpecimenListTableModel>(model);
 			jTable.setRowSorter(sorter);
-			//jTable.setDefaultRenderer(Long.class, new ButtonRenderer());
-            //jTable.setDefaultEditor(Long.class, new ButtonEditor());
 			jTable.setDefaultRenderer(Specimen.class, new ButtonRenderer());
             jTable.setDefaultEditor(Specimen.class, new ButtonEditor());
             // set some column widths
@@ -284,12 +282,12 @@ public class SpecimenBrowser extends JPanel implements DataChangeListener {
     		RowFilter<SpecimenListTableModel, Object> rf_workflow = null;
             rf_family = RowFilter.regexFilter(jTextFieldFamily.getText(), SpecimenListTableModel.COL_FAMILY);
     	    rf_barcode = RowFilter.regexFilter(jTextField.getText(), SpecimenListTableModel.COL_BARCODE);
-    	    rf_drawer = RowFilter.regexFilter(jTextFieldDrawerNumber.getText(), SpecimenListTableModel.COL_DRAWER);
+    	    //rf_drawer = RowFilter.regexFilter(jTextFieldDrawerNumber.getText(), SpecimenListTableModel.COL_DRAWER);
     	    rf_workflow = RowFilter.regexFilter(jComboBox.getSelectedItem().toString(), SpecimenListTableModel.COL_WORKFLOW); 
     	    ArrayList<RowFilter<SpecimenListTableModel, Object>> i = new ArrayList<RowFilter<SpecimenListTableModel, Object>>();
     	    i.add(rf_family);
     	    i.add(rf_barcode);
-    	    i.add(rf_drawer);
+    	    //i.add(rf_drawer);
     	    i.add(rf_workflow);
     	    rf = RowFilter.andFilter((Iterable<RowFilter<SpecimenListTableModel, Object>>)i); 
         } catch (java.util.regex.PatternSyntaxException e) {

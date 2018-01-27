@@ -48,9 +48,10 @@ public class SpecimenListTableModel extends AbstractTableModel {
 	public static final int COL_SPECIFIC = 7;
 	public static final int COL_SUBSPECIFIC = 8;
 	public static final int COL_HIGHERGEOG = 9;
-	public static final int COL_VERBLOCALITY = 10;
-	public static final int COL_COUNTRY = 11;
-	public static final int COL_DRAWER = 12;
+	public static final int COL_COUNTRY = 10;
+	public static final int COL_DIVISION = 11;
+	public static final int COL_VERBLOCALITY = 12;
+	//public static final int COL_DRAWER = 12;
 	public static final int COLUMCOUNT = 13;
 	
 	private List<Specimen> specimens = null;
@@ -120,8 +121,9 @@ public class SpecimenListTableModel extends AbstractTableModel {
 		case COL_COUNTRY: 
 			result = s.getCountry();
 			break;			
-		case COL_DRAWER: 
-			result = s.getDrawerNumber();
+		case COL_DIVISION: 
+			//result = s.getDrawerNumber();
+			result = s.getPrimaryDivison();
 			break;
 		}
 		return result;
@@ -188,8 +190,8 @@ public class SpecimenListTableModel extends AbstractTableModel {
 		case COL_COUNTRY: 
 			result = "Country";
 			break;			
-		case COL_DRAWER: 
-			result = "Drawer";
+		case COL_DIVISION: 
+			result = "State/Province";
 			break;			
 		}
 		return result;
