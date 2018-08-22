@@ -113,7 +113,16 @@ public class GeoreferenceDialog extends JDialog {
 		lblErrorLabel.setText("");
 		textFieldDecimalLat.setText(georeference.getDecLatString());
 		textFieldDecimalLong.setText(georeference.getDecLongString());
-		cbDatum.setSelectedItem(georeference.getDatum());
+		
+		log.debug("load geo data ... " + georeference.getDecLatString());
+		log.debug("load geo data ... " + georeference.getDecLongString());
+		
+		//here should set the button label
+		
+		//alliefix - should be WGS84
+		//cbDatum.setSelectedItem(georeference.getDatum());
+		cbDatum.setSelectedIndex(2);
+		
 		cbMethod.setSelectedItem(georeference.getGeorefmethod());
 		
 		txtGPSAccuracy.setText(georeference.getGpsaccuracyString());
@@ -374,6 +383,9 @@ public class GeoreferenceDialog extends JDialog {
 		@SuppressWarnings("unchecked")
 		ComboBoxModel<String> datumModel = new ListComboBoxModel<String>(LatLong.getDatumValues());
 		cbDatum = new JComboBox<String>(datumModel);
+		
+		//qllie - default should be WGS84 ?
+		
 		contentPanel.add(cbDatum);
 		
 		JLabel lblMethod = new JLabel("Method");

@@ -98,7 +98,7 @@ public class Specimen implements java.io.Serializable {
 	public Specimen() {
 		setDefaults();
 	}
-
+	
 	/** Set default values for a new specimen object with no other data.
 	 * 
 	 */

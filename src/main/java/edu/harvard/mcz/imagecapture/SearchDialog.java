@@ -578,7 +578,7 @@ public class SearchDialog extends JDialog {
 			jPanel1.add(getJTextField3(), gridBagConstraints31);
 			jPanel1.add(getJTextField4(), gridBagConstraints41);
 			jPanel1.add(jLabel4, gridBagConstraints5);
-			GridBagConstraints gbc_lblHigherGeography = new GridBagConstraints();
+			/*GridBagConstraints gbc_lblHigherGeography = new GridBagConstraints();
 			gbc_lblHigherGeography.insets = new Insets(0, 0, 5, 5);
 			gbc_lblHigherGeography.anchor = GridBagConstraints.EAST;
 			gbc_lblHigherGeography.gridx = 0;
@@ -588,8 +588,8 @@ public class SearchDialog extends JDialog {
 			gbc_textFieldHigherGeog.insets = new Insets(0, 0, 5, 0);
 			gbc_textFieldHigherGeog.fill = GridBagConstraints.HORIZONTAL;
 			gbc_textFieldHigherGeog.gridx = 1;
-			gbc_textFieldHigherGeog.gridy = 12;
-			jPanel1.add(getTextFieldHigherGeog(), gbc_textFieldHigherGeog);
+			gbc_textFieldHigherGeog.gridy = 12;*/
+			//jPanel1.add(getTextFieldHigherGeog(), gbc_textFieldHigherGeog);
 			jPanel1.add(jLabel5, gridBagConstraints6);
 			jPanel1.add(jLabel6, gridBagConstraints7);
 			jPanel1.add(getJComboBox(), gridBagConstraints8);

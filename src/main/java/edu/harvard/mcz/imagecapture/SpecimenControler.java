@@ -219,16 +219,42 @@ public class SpecimenControler {
 	public boolean save() throws SaveFailedException { 
 	    boolean result = false;
 		SpecimenLifeCycle s = new SpecimenLifeCycle();
+		log.debug("in SpecimenControler.save: specimenId is " + specimen.getSpecimenId());
+		log.debug("in SpecimenControler.save: specimen barcode is " + specimen.getBarcode());
 		if (specimen.getSpecimenId()!=null) { 
+			log.debug("before attachDirty");
 		    s.attachDirty(specimen);
+			log.debug("after attachDirty");
 		} else { 
 			try {
 				s.persist(specimen);
 			} catch (SpecimenExistsException e) {
 				// convert special case used in preprocessing back to a save failed exception.
+				e.printStackTrace();
 				throw new SaveFailedException(e.getMessage(),e);
 			}
 		}
+		notifyListeners();
+    	// reload the specimen
+		// Why???
+    	//specimen = s.findById(specimen.getSpecimenId());
+		return result;
+	}
+	
+	public boolean save(Specimen copiedSpecimen) throws SaveFailedException { 
+	    specimen = copiedSpecimen;
+		boolean result = false;
+		SpecimenLifeCycle s = new SpecimenLifeCycle();
+		if (specimen.getSpecimenId()!=null) { 
+		    s.attachDirty(specimen);
+		} //else { 
+		try {
+				s.persist(specimen);
+			} catch (SpecimenExistsException e) {
+				// convert special case used in preprocessing back to a save failed exception.
+				throw new SaveFailedException(e.getMessage(),e);
+		}
+		//}
 		notifyListeners();
     	// reload the specimen
 		// Why???

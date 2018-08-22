@@ -24,6 +24,7 @@ package edu.harvard.mcz.imagecapture;
 
 import java.awt.Cursor;
 
+
 /** for experimental chat support
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -45,6 +46,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.harvard.mcz.imagecapture.data.Specimen;
 import edu.harvard.mcz.imagecapture.data.SpecimenLifeCycle;
 import edu.harvard.mcz.imagecapture.interfaces.BarcodeBuilder;
 import edu.harvard.mcz.imagecapture.interfaces.BarcodeMatcher;
@@ -82,7 +84,7 @@ public class ImageCaptureApp {
     public static final String APP_CONTRIBUTORS = "Design: Brendan Haley, Linda Ford, Rodney Eastwood, Paul J. Morris.  Code: Paul J. Morris";
     public static final String APP_LIBRARIES = "Hibernate, Tesseract, ZXing, Log4J, drew.metadata.exif, iText, event_date_qc";
     public static final String APP_REV = "$Rev$";  // ImageCapture.jar file built before commit will be one revision behind latest commit with changes to this file. 
-    
+    public static Specimen lastEditedSpecimenCache=null;
     /** 
      * Use MCZEntBarcode class instead.
      *  

@@ -159,6 +159,9 @@ public class ImageCaptureProperties  extends AbstractTableModel {
 	 */
 	public static final String KEY_REDUNDANT_COMMENT_BARCODE = "images.metadatacontainsbarcode";
 	
+	//allieadd
+	public static final String DISPLAY_COLLECTION = "display.collection";
+	
 	/**
 	 *  Value for KEY_DETAILS_SCROLL that will cause the specimen details view pane to
 	 *  have scroll bars forced to be turned on.

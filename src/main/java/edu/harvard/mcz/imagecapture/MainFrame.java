@@ -515,11 +515,17 @@ public class MainFrame extends JFrame implements RunnerListener {
 			jMenuItemDelete = new JMenuItem();
 			jMenuItemDelete.setText("Delete a specimen record");
 			jMenuItemDelete.setEnabled(true);
+			try { 
+				jMenuItemDelete.setIcon(new ImageIcon(this.getClass().getResource("/edu/harvard/mcz/imagecapture/resources/red-warning-icon.png")));
+			} catch (Exception e) { 
+				log.error("Can't open icon file for jMenuItemScanOneBarcode.");
+				log.error(e.getLocalizedMessage());
+			}			
 			jMenuItemDelete.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					JTextField barcode = new JTextField();
 					final JComponent[] inputs = new JComponent[] {
-					        new JLabel("Please enter the barcode of the specimen record you would like to delete:"),
+					        new JLabel("<html>WARNING: ACTION IRREVERSIBLE!<br/><br/>Is there only one image associated with this record?<br/>Have you recorded the image file number/s and date imaged?<br/>Have you recorded the genus and species name?<br/><br/>Please enter the barcode of the specimen record you would like to delete:<br/>"),
 					        barcode
 					};
 					int result = JOptionPane.showConfirmDialog(null, inputs, "Delete a specimen record", JOptionPane.CANCEL_OPTION);

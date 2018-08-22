@@ -125,7 +125,9 @@ public class SpecimenLifeCycle {
 			}
 		}
 		Iterator<Number> in = instance.getNumbers().iterator();
+		log.debug("in attachDirty - start iterating numbers!");		
 		while (in.hasNext()) { 
+			log.debug("iterating numbers 1");
 			Number num = in.next();
 			if ( (num.getNumber()==null || num.getNumber().trim().length()==0 ) && 
 				 (num.getNumberType()==null || num.getNumberType().length()==0)
@@ -168,9 +170,7 @@ public class SpecimenLifeCycle {
 	public void attachClean(Specimen instance) {
 		try { 
 			log.debug(instance.getSpecimenParts().size());
-			log.debug("crashes here? 3");
 		    log.debug(((SpecimenPart)instance.getSpecimenParts().toArray()[0]).getPartAttributeValuesConcat());
-		    log.debug("crashes here? 4");
 		} catch (Exception e) {
 			 log.debug(e.getMessage());
 		} 
@@ -202,9 +202,7 @@ public class SpecimenLifeCycle {
 		}				
 		try { 
 		    log.debug(instance.getSpecimenParts().size());
-		    log.debug("crashes here? 5");
 		    log.debug(((SpecimenPart)instance.getSpecimenParts().toArray()[0]).getPartAttributeValuesConcat());
-		    log.debug("crashes here? 6");
 		} catch (Exception e) { 
 			log.debug(e.getMessage());
 		}
