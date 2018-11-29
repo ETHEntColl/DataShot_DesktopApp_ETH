@@ -133,10 +133,15 @@ public class TemplateLifeCycle {
 	}
 
 	public Template findById(java.lang.String id) {
-		log.debug("getting Template instance with id: " + id);
+		//log.debug("getting Template instance with id: " + id);
 		try {
 			Template instance = null;
+			//log.debug("getting Template instance 1");
+			//this causes infinite loop
 			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			
+			//never reaches here
+			log.debug("getting Template instance 2");
 			session.beginTransaction();
 			try { 
 				instance = (Template) session.get("edu.harvard.mcz.imagecapture.data.Template", id);
@@ -146,10 +151,13 @@ public class TemplateLifeCycle {
 				} else {
 					log.debug("get successful, instance found");
 				}
+
 			} catch (HibernateException e) { 
+
 				session.getTransaction().rollback();
 				log.error(e.getMessage());
 			}
+
 			try { session.close(); } catch (SessionException e) { }
 			return instance;
 		} catch (RuntimeException re) {
@@ -157,6 +165,10 @@ public class TemplateLifeCycle {
 			throw re;
 		}
 	}
+	
+	/*public Template findById(java.lang.String id) {
+		return null;
+	}*/
 
 	@SuppressWarnings("unchecked")
 	public List<Template> findByExample(Template instance) {

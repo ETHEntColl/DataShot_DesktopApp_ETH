@@ -2038,7 +2038,7 @@ public class SpecimenDetailsViewPane extends JPanel {
 			jPanel.add(getJButton1(), gridBagConstraints116);
 			
 			JPanel subPanel = new JPanel();
-			subPanel.add(getJButtonCopyPrevTaxon());
+			//subPanel.add(getJButtonCopyPrevTaxon());
 		    subPanel.add(getJButtonCopyPrev());
 		    
 			//jPanel.add(getJButtonCopyPrev(), gridBagConstraintsCopyPrev);

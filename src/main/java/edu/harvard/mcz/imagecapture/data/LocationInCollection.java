@@ -28,7 +28,9 @@ public class LocationInCollection {
 		
 		String coll = Singleton.getSingletonInstance().getProperties().getProperties().getProperty(ImageCaptureProperties.KEY_COLLECTION);
 		if (coll.equals(ImageCaptureProperties.COLLECTION_ETHZENT)) { 
-		    String [] values = { "Palaearctic Lepidoptera Collection", "Type Collection", "Your new value" };
+			String [] values = { "ETH Entomological Collection", "Type Collection" };
+		    //old
+			//String [] values = { "Palaearctic Lepidoptera Collection", "Type Collection", "Your new value" };
 		    return values;
 		} else { 
 		    String [] values = {GENERAL, GENERALANT, "Type Collection", "Nabokov Collection", "Slide Collection"}; 

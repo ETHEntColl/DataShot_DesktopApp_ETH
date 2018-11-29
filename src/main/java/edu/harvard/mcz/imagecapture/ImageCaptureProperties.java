@@ -161,6 +161,8 @@ public class ImageCaptureProperties  extends AbstractTableModel {
 	
 	//allieadd
 	public static final String DISPLAY_COLLECTION = "display.collection";
+	//allieadd
+	public static final String DEFAULT_TEMPLATES = "template.default2";
 	
 	/**
 	 *  Value for KEY_DETAILS_SCROLL that will cause the specimen details view pane to

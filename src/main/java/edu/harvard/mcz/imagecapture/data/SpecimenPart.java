@@ -28,7 +28,7 @@ public class SpecimenPart {
 	   "molt", "other", "pupal exuvia", "pupal shelter", "puparium", 
 	   "sphragis" 
 	   } ;
-	public static final String[] PRESERVENAMES = {"pinned", "pointed","carded","envelope","capsule"};
+	public static final String[] PRESERVENAMES = {"pinned", "pointed","carded","envelope","capsule","alcohol"};
 	
 	private static final Log log = LogFactory.getLog(SpecimenPart.class);
 	

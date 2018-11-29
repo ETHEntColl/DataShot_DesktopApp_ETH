@@ -77,6 +77,14 @@ public class ConfiguredBarcodePositionTemplateDetector implements	PositionTempla
 
 		// iterate through templates and check until the first template where a barcode is found
 		List<String> templates = PositionTemplate.getTemplateIds();
+		
+		//allie
+		for(String t : templates){
+			log.debug("list of templates::: " + t);
+		}
+	
+		
+		
 		ListIterator<String> i = templates.listIterator();
 		boolean found = false;
 		while (i.hasNext() && !found) {

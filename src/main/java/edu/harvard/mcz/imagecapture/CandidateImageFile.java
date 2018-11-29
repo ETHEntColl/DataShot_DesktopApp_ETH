@@ -148,10 +148,12 @@ public class CandidateImageFile {
 		if (templateName.equals(PositionTemplate.TEMPLATE_NO_COMPONENT_PARTS)) {
 			// If that fails, try each template more exhaustively.
 		    templateName = detector.detectTemplateForImage(aFile,this,false);
-		} 	
+		} 
 			
 		try {
 			template = new PositionTemplate(templateName);
+			log.info("template ID is.........." + template.getTemplateId());
+			//log.info("templateName is......." + templateName);
 		} catch (NoSuchTemplateException e) {
 			log.error("Position template detector returned an unknown template name: " + templateName + ".", e);
 		}
@@ -642,7 +644,7 @@ public class CandidateImageFile {
 	 * @return null or a UnitTrayLabel containing the parsed text of the taxon label read from the barcode.
 	 */
 	public UnitTrayLabel getTaxonLabelQRText(PositionTemplate positionTemplate) { 
-		
+		log.info("2 template ID is.........." + positionTemplate.getTemplateId());
 		log.debug(unitTrayLabel);
 		log.debug(unitTrayTaxonLabelTextStatus);
 		log.debug(labelText);
@@ -744,24 +746,16 @@ public class CandidateImageFile {
 				try { 
 					if(aTemplate != null && aTemplate.getTextPosition() != null){ //allie edit
 						int x = aTemplate.getTextPosition().width;   
-						log.debug("in CandidateImageFile.getLabelOCRText() 2 x is " + x);
 						int y =  aTemplate.getTextPosition().height; 
-						log.debug("in CandidateImageFile.getLabelOCRText() 3 y is " + x);
 						int w = aTemplate.getTextSize().width;  
-						log.debug("in CandidateImageFile.getLabelOCRText() 4 w is " + x);
 						int h = aTemplate.getTextSize().height;
-						log.debug("in CandidateImageFile.getLabelOCRText() 5 h is " + x);
 	
 						// OCR and parse UnitTray Label
 						ConvertTesseractOCR o = new ConvertTesseractOCR(image.getSubimage(x, y, w, h));
-						log.debug("in CandidateImageFile.getLabelOCRText() 6");
 						labelText = "";
 						try {
-							log.debug("in CandidateImageFile.getLabelOCRText() 7");
 							labelText = o.getOCRText();
-							log.debug("in CandidateImageFile.getLabelOCRText() 8 labelText is " + labelText);
 						} catch (OCRReadException e) {
-							log.debug("in CandidateImageFile.getLabelOCRText() 9 OCRReadException");
 							log.error(e.getMessage());
 							e.printStackTrace();
 						}
@@ -785,9 +779,7 @@ public class CandidateImageFile {
 						ConvertTesseractOCR o = new ConvertTesseractOCR(image.getSubimage(x, y, w, h));
 						labelText = "";
 						try {
-							log.debug("in CandidateImageFile.getLabelOCRText() 11");
 							labelText = o.getOCRText();
-							log.debug("in CandidateImageFile.getLabelOCRText() 12 labelText is " + labelText);
 						} catch (OCRReadException e) {
 							log.error(e.getMessage());
 							e.printStackTrace();
@@ -801,7 +793,6 @@ public class CandidateImageFile {
 				}
 			}
 		}
-		log.debug("in CandidateImageFile.getLabelOCRText() 13 labelText is " + labelText);
 		return labelText;
 	} 
 
