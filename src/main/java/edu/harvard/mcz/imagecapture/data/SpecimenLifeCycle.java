@@ -359,6 +359,32 @@ public class SpecimenLifeCycle {
 			throw re;
 		}
 	}	
+	
+	
+	//Select distinct path from ICImage im where im.path is not null order by im.path
+	@SuppressWarnings("unchecked")
+	public List<ICImage> findImagesByPath(String path) {
+		log.debug("finding images by path " + path);
+		try {
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			session.beginTransaction();
+			List<ICImage> results = null;
+			try { 
+				Query query = session.createQuery("From ICImage im where im.path='"+path+"' order by imageId");
+			    results = (List<ICImage>) query.list();
+			    //log.debug("found images, result size: " + results.size());
+			    session.getTransaction().commit();
+		    } catch (HibernateException e) {
+		    	session.getTransaction().rollback();
+		    	log.error("find images failed", e);	
+		    }
+		    try { session.close(); } catch (SessionException e) { }
+			return results;
+		} catch (RuntimeException re) {
+			log.error("Find images failed. ", re);
+			throw re;
+		}
+	}	
 
 	/** Find specimens with values matching those found in an example specimen instance, including links out 
 	 * to related entities.  Like matching is enabled, so strings containing '%' will generate like where 
