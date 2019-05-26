@@ -102,9 +102,11 @@ public class SearchDialog extends JDialog {
 	private JComboBox jComboBoxPrimaryDivision = null;
 	private JTextField textFieldHigherGeog;
 	private JLabel lblHigherGeography;
+	private JTextField jTextFieldInterpretedDate;
 	
 	//allie change
 	private JLabel jLabel20 = null;
+	private JLabel jLabel21 = null;
 	
 	/**
 	 * 
@@ -228,6 +230,11 @@ public class SearchDialog extends JDialog {
 						   searchCriteria.setPrimaryDivison(jComboBoxPrimaryDivision.getSelectedItem().toString());
 						}
 					}
+					
+					if (jTextFieldInterpretedDate.getText()!=null && jTextFieldInterpretedDate.getText().length() > 0) { 
+						searchCriteria.setIsoDate(jTextFieldInterpretedDate.getText());
+					}
+					
 					//end allie change
 					
 					if (jComboBoxCollector.getSelectedItem()!=null) {
@@ -430,6 +437,12 @@ public class SearchDialog extends JDialog {
 			gridBagConstraints101.weightx = 1.0;
 			gridBagConstraints101.gridx = 1;
 			
+			GridBagConstraints gridBagConstraints103 = new GridBagConstraints();
+			gridBagConstraints103.fill = GridBagConstraints.BOTH;
+			gridBagConstraints103.gridy = 31;
+			gridBagConstraints103.weightx = 1.0;
+			gridBagConstraints103.gridx = 1;
+			
 			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
 			gridBagConstraints14.insets = new Insets(0, 0, 5, 0);
 			gridBagConstraints14.fill = GridBagConstraints.BOTH;
@@ -458,6 +471,14 @@ public class SearchDialog extends JDialog {
 			gridBagConstraints100.gridy = 21;
 			jLabel20 = new JLabel();
 			jLabel20.setText("Identified By");
+			
+			GridBagConstraints gridBagConstraints102 = new GridBagConstraints();
+			gridBagConstraints102.insets = new Insets(0, 0, 0, 5);
+			gridBagConstraints102.gridx = 0;
+			gridBagConstraints102.anchor = GridBagConstraints.NORTHEAST;
+			gridBagConstraints102.gridy = 31;
+			jLabel21 = new JLabel();
+			jLabel21.setText("Interpreted Date");
 			
 			GridBagConstraints gridBagConstraints111 = new GridBagConstraints();
 			gridBagConstraints111.insets = new Insets(0, 0, 5, 5);
@@ -600,6 +621,7 @@ public class SearchDialog extends JDialog {
 			
 			//allie change
 			jPanel1.add(jLabel20, gridBagConstraints100);
+			jPanel1.add(jLabel21, gridBagConstraints102);
 			
 			jPanel1.add(getJTextField5(), gridBagConstraints13);
 			jPanel1.add(getJComboBox2(), gridBagConstraints14);
@@ -607,6 +629,7 @@ public class SearchDialog extends JDialog {
 			
 			//allie change
 			jPanel1.add(getIdentifiedByComboBox(), gridBagConstraints101);
+			jPanel1.add(getInterpretedDateTextField(), gridBagConstraints103);
 			
 			jPanel1.add(jLabel10, gridBagConstraints16);
 			jPanel1.add(getJTextField6(), gridBagConstraints22);
@@ -798,6 +821,13 @@ public class SearchDialog extends JDialog {
 		return jTextFieldSubspecies;
 	}
 
+	private JTextField getInterpretedDateTextField() {
+		if (jTextFieldInterpretedDate == null) {
+			jTextFieldInterpretedDate = new JTextField();
+		}
+		return jTextFieldInterpretedDate;
+	}
+	
 	/**
 	 * This method initializes jButton1	
 	 * 	

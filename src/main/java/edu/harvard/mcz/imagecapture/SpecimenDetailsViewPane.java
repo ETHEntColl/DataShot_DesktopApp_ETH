@@ -582,11 +582,9 @@ public class SpecimenDetailsViewPane extends JPanel {
 		updateDeterminationCount();
 	}
 	
-
-	
-	
 	private void copyPreviousRecord(){
 		log.debug("calling copyPreviousRecord()");
+		thisPane.setStateToDirty();
 		jTextFieldDateDetermined.setText(previousSpecimen.getDateIdentified());	
 		jCBDeterminer.setSelectedItem(previousSpecimen.getIdentifiedBy());
 		jTextFieldVerbatimLocality.setText(previousSpecimen.getVerbatimLocality());

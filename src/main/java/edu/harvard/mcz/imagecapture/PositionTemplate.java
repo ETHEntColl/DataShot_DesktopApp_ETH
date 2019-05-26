@@ -92,6 +92,7 @@ public class PositionTemplate {
 	 * @return a list of the identifiers of the currently available templates.
 	 */
 	public static List<String> getTemplateIds() { 
+		log.debug("in getTemplateIds()");
 		String[] templates = { TEMPLATE_TEST_1, TEMPLATE_DEFAULT, TEMPLATE_NO_COMPONENT_PARTS  };
 		
 		List<String> temp = Arrays.asList(templates);
@@ -116,6 +117,7 @@ public class PositionTemplate {
 			log.debug("defaultTemplatesPropertiesVal::::: " + defaultTemplatesPropertiesVal);
 		}
 		else{ //here it cycles through all the templates (if you leave template.default=Default template and template.default2=)
+			log.debug("it will cycle through all templates::::: " + defaultTemplatesPropertiesVal);
 			for (int i=0; i<temp.size(); i++) { 
 				templateIdList.add(temp.get(i));
 			}

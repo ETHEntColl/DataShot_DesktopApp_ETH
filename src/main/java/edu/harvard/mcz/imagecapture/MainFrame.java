@@ -20,6 +20,7 @@
 package edu.harvard.mcz.imagecapture;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -1261,21 +1262,30 @@ public class MainFrame extends JFrame implements RunnerListener {
 			}*/			
 			jMenuItemFindMissingImages.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					JTextField dateimaged = new JTextField();
+					//JTextField dateimaged = new JTextField();
+					SpecimenLifeCycle sls2 = new SpecimenLifeCycle();
+					String[] paths = sls2.getDistinctPaths();
+					log.debug("num paths" + paths.length);
+					JComboBox<String> pathCombo = new JComboBox<String>(paths);
+					pathCombo.setEditable(true);
 					final JComponent[] inputs = new JComponent[] {
-					        new JLabel("<html>Find missing images<br/><br/>Please enter the date:<br/>"),
-					        dateimaged
+					        new JLabel("<html>Find missing images<br/><br/>Please select the date imaged:<br/>"),
+					        pathCombo
 					};
 					int result = JOptionPane.showConfirmDialog(null, inputs, "Find missing images", JOptionPane.CANCEL_OPTION);
 					//
 					if (result==JOptionPane.YES_OPTION) { 
-						String dateEntered = dateimaged.getText();
+						//String dateEntered = dateimaged.getText();
+						String dateEntered = pathCombo.getSelectedItem().toString();
+						dateEntered = dateEntered.replace("\"", "");
 						SpecimenLifeCycle sls = new SpecimenLifeCycle();
 						List<ICImage> results = sls.findImagesByPath(dateEntered);
 					    ArrayList<Integer> seqvals = new ArrayList();
 					    ArrayList<Integer> missingvals = new ArrayList();
+					    String img_prefix = "";
 					    for(ICImage im : results){
 					    	int last_underscore = im.getFilename().lastIndexOf("_");
+					    	img_prefix = im.getFilename().substring(0,last_underscore);
 					    	int dot = im.getFilename().indexOf(".");
 					    	String seqnum = im.getFilename().substring(last_underscore+1,dot);
 					    	//log.debug("seqnum: " + seqnum);
@@ -1299,7 +1309,7 @@ public class MainFrame extends JFrame implements RunnerListener {
 				    		}
 				    	}
 						StringBuilder sb = new StringBuilder();
-						for(Integer cint : missingvals){
+						/*for(Integer cint : missingvals){
 							if(cint < 10000){
 								sb.append("ETHZ_ENT01_2017_03_15_00");
 							}else if(cint < 100000){
@@ -1310,12 +1320,20 @@ public class MainFrame extends JFrame implements RunnerListener {
 							sb.append(cint);
 							sb.append(".JPG");
 							sb.append("\n");
+						}*/
+						for(Integer cint : missingvals){
+							sb.append(img_prefix);
+							sb.append(cint);
+							sb.append(".JPG");
+							sb.append("\n");
 						}
+						
+						
 						/*for(ICImage im : results){
 							sb.append(im.getFilename());
 							sb.append("\n");
 						}*/
-						JOptionPane.showConfirmDialog(null, "Found " + results.size() + " images for the date " + dateEntered + ".\n\nMissing images:\n" + sb.toString(), "Find missing images", JOptionPane.PLAIN_MESSAGE);
+						JOptionPane.showConfirmDialog(null, "Found " + results.size() + " images in the database for the date " + dateEntered + ".\n\nPossible missing images:\n" + sb.toString(), "Find missing images", JOptionPane.PLAIN_MESSAGE);
 					}
 				}
 			});
