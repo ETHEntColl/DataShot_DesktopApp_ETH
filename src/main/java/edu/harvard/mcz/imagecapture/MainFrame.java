@@ -1277,7 +1277,7 @@ public class MainFrame extends JFrame implements RunnerListener {
 					if (result==JOptionPane.YES_OPTION) { 
 						//String dateEntered = dateimaged.getText();
 						String dateEntered = pathCombo.getSelectedItem().toString();
-						dateEntered = dateEntered.replace("\"", "");
+						dateEntered = dateEntered.replaceAll("\"", "\\\\");
 						SpecimenLifeCycle sls = new SpecimenLifeCycle();
 						List<ICImage> results = sls.findImagesByPath(dateEntered);
 					    ArrayList<Integer> seqvals = new ArrayList();
