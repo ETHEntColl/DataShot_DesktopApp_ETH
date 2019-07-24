@@ -1265,7 +1265,7 @@ public class MainFrame extends JFrame implements RunnerListener {
 					//JTextField dateimaged = new JTextField();
 					SpecimenLifeCycle sls2 = new SpecimenLifeCycle();
 					String[] paths = sls2.getDistinctPaths();
-					log.debug("num paths" + paths.length);
+					//log.debug("num paths" + paths.length);
 					JComboBox<String> pathCombo = new JComboBox<String>(paths);
 					pathCombo.setEditable(true);
 					final JComponent[] inputs = new JComponent[] {
@@ -1277,7 +1277,10 @@ public class MainFrame extends JFrame implements RunnerListener {
 					if (result==JOptionPane.YES_OPTION) { 
 						//String dateEntered = dateimaged.getText();
 						String dateEntered = pathCombo.getSelectedItem().toString();
-						dateEntered = dateEntered.replaceAll("\"", "\\\\");
+						//dateEntered = dateEntered.replaceAll("\\", "\\\\");
+						//System.out.println("BEFORE DATE ENTERED IS " + dateEntered);
+						//dateEntered = dateEntered.replaceAll("\\", "\\\\");
+						System.out.println("DATE ENTERED IS " + dateEntered);
 						SpecimenLifeCycle sls = new SpecimenLifeCycle();
 						List<ICImage> results = sls.findImagesByPath(dateEntered);
 					    ArrayList<Integer> seqvals = new ArrayList();

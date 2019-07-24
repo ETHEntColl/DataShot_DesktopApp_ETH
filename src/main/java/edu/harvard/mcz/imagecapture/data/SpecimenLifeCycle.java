@@ -370,7 +370,19 @@ public class SpecimenLifeCycle {
 			session.beginTransaction();
 			List<ICImage> results = null;
 			try { 
-				Query query = session.createQuery("From ICImage im where im.path='"+path+"' order by imageId");
+				
+				
+				//System.out.println("path is " + path);
+				//this works
+				String sql = "";
+				if(path.contains("\\")){
+					sql = "From ICImage im where im.path='"+path+"\\\' order by imageId";
+				}else{
+					sql = "From ICImage im where im.path='"+path+"' order by imageId";
+				}
+				
+				//String sql = "From ICImage im where im.path='"+path+"\\\' order by imageId";
+				Query query = session.createQuery(sql);
 			    results = (List<ICImage>) query.list();
 			    //log.debug("found images, result size: " + results.size());
 			    session.getTransaction().commit();
