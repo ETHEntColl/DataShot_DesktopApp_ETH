@@ -50,6 +50,7 @@ import edu.harvard.mcz.imagecapture.data.Sex;
 import edu.harvard.mcz.imagecapture.data.Specimen;
 import edu.harvard.mcz.imagecapture.data.SpecimenLifeCycle;
 import edu.harvard.mcz.imagecapture.data.SpecimenPart;
+import edu.harvard.mcz.imagecapture.data.SpecimenPartAttribute;
 import edu.harvard.mcz.imagecapture.data.SpecimenPartLifeCycle;
 import edu.harvard.mcz.imagecapture.data.SpecimenPartsAttrTableModel;
 import edu.harvard.mcz.imagecapture.data.SpecimenPartsTableModel;
@@ -64,6 +65,7 @@ import edu.harvard.mcz.imagecapture.ui.FilteringAgentJComboBox;
 import edu.harvard.mcz.imagecapture.ui.FilteringGeogJComboBox;
 import edu.harvard.mcz.imagecapture.ui.PicklistTableCellEditor;
 import edu.harvard.mcz.imagecapture.ui.ValidatingTableCellEditor;
+import edu.harvard.mcz.imagecapture.data.Number;
 
 import java.awt.Dimension;
 
@@ -80,10 +82,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
@@ -584,7 +588,7 @@ public class SpecimenDetailsViewPane extends JPanel {
 	
 	private void copyPreviousRecord(){
 		log.debug("calling copyPreviousRecord()");
-		thisPane.setStateToDirty();
+		//thisPane.setStateToDirty();
 		jTextFieldDateDetermined.setText(previousSpecimen.getDateIdentified());	
 		jCBDeterminer.setSelectedItem(previousSpecimen.getIdentifiedBy());
 		jTextFieldVerbatimLocality.setText(previousSpecimen.getVerbatimLocality());
@@ -622,32 +626,28 @@ public class SpecimenDetailsViewPane extends JPanel {
 		microhabitTextField.setText(previousSpecimen.getMicrohabitat());
 		jTextAreaSpecimenNotes.setText(previousSpecimen.getSpecimenNotes());
 		jTextFieldInferences.setText(previousSpecimen.getInferences());
-		
-		//+numbers		
-		//this works and is how you need to copy over the table values!!!!!!
+				
+		//+numbers 	
 		specimen.getNumbers().clear();
 		Iterator<edu.harvard.mcz.imagecapture.data.Number> iter = previousSpecimen.getNumbers().iterator();
 		while(iter.hasNext()){
-			specimen.getNumbers().add((edu.harvard.mcz.imagecapture.data.Number)iter.next());
+			//specimen.getNumbers().add((edu.harvard.mcz.imagecapture.data.Number)iter.next());
+			Number n = new Number();
+			Number n2 = (edu.harvard.mcz.imagecapture.data.Number)iter.next();
+			n.setNumber(new String(n2.getNumber()));
+			n.setSpecimen(specimen);
+			n.setNumberId(new Long(n2.getNumberId()));
+			n.setNumberType(new String(n2.getNumberType()));
+			specimen.getNumbers().add(n);
+			
 		}
 		jTableNumbers.setModel(new NumberTableModel(specimen.getNumbers()));
 		
-		// Setting the model will overwrite the existing cell editor bound 
-		// to the column model, so we need to add it again.
-		JTextField field1 = new JTextField();
-		field1.setInputVerifier(MetadataRetriever.getInputVerifier(edu.harvard.mcz.imagecapture.data.Number.class, "Number", field1));
-		field1.setVerifyInputWhenFocusTarget(true);
-		jTableNumbers.getColumnModel().getColumn(0).setCellEditor(new ValidatingTableCellEditor(field1));
-		JComboBox jComboNumberTypes = new JComboBox();
-		jComboNumberTypes.setModel(new DefaultComboBoxModel(NumberLifeCycle.getDistinctTypes()));
-		jComboNumberTypes.setEditable(true);
-		TableColumn typeColumn = jTableNumbers.getColumnModel().getColumn(NumberTableModel.COLUMN_TYPE);
-		typeColumn.setCellEditor(new DefaultCellEditor(jComboNumberTypes));
-
-		
 		//+ verify the georeference data (we do want it all copied)
+		
+		
 		//+ preparation type (the whole table!) = specimen parts
-		jTableSpecimenParts.setModel(new SpecimenPartsTableModel(previousSpecimen.getSpecimenParts()));
+		/*jTableSpecimenParts.setModel(new SpecimenPartsTableModel(previousSpecimen.getSpecimenParts()));
 		jTableSpecimenParts.getColumnModel().getColumn(0).setPreferredWidth(90);
 		for (int i = 0; i < jTableSpecimenParts.getColumnCount(); i++) {
 		    TableColumn column = jTableSpecimenParts.getColumnModel().getColumn(i);
@@ -663,19 +663,62 @@ public class SpecimenDetailsViewPane extends JPanel {
 		while(iterp.hasNext()){
 			specimen.getSpecimenParts().add((edu.harvard.mcz.imagecapture.data.SpecimenPart)iterp.next());
 		}
+		jTableSpecimenParts.setModel(new SpecimenPartsTableModel(specimen.getSpecimenParts()));*/
+		
+		specimen.getSpecimenParts().clear();
+		Iterator<edu.harvard.mcz.imagecapture.data.SpecimenPart> iterp = previousSpecimen.getSpecimenParts().iterator();
+		while(iterp.hasNext()){
+			SpecimenPart part = new SpecimenPart();
+			SpecimenPart part2 = (edu.harvard.mcz.imagecapture.data.SpecimenPart)iterp.next();
+			Collection<SpecimenPartAttribute> coll = new ArrayList<SpecimenPartAttribute>();
+			Collection<SpecimenPartAttribute> coll2 = part2.getAttributeCollection();
+			Iterator<SpecimenPartAttribute> iterpa = coll2.iterator();
+			while(iterpa.hasNext()){
+				SpecimenPartAttribute pa2 = iterpa.next();
+				SpecimenPartAttribute pa = new SpecimenPartAttribute();
+				pa.setAttributeDate(pa2.getAttributeDate());
+				pa.setAttributeDeterminer(pa.getAttributeDeterminer());
+				pa.setAttributeRemark(pa2.getAttributeRemark());
+				pa.setAttributeType(pa2.getAttributeType());
+				pa.setAttributeUnits(pa2.getAttributeUnits());
+				pa.setAttributeValue(pa2.getAttributeValue());
+				pa.setSpecimenPartAttributeId(pa2.getSpecimenPartAttributeId());
+				pa.setSpecimenPartId(pa2.getSpecimenPartId());
+				coll.add(pa);
+			}
+			part.setAttributeCollection(coll);
+			part.setLotCount(part2.getLotCount());
+			part.setLotCountModifier(part2.getLotCountModifier());
+			part.setPartName(part2.getPartName());
+			part.setPreserveMethod(part2.getPreserveMethod());
+			part.setSpecimenId(part2.getSpecimenId());
+			part.setSpecimenPartId(part2.getSpecimenPartId());
+			specimen.getSpecimenParts().add(part);
+		}
 		jTableSpecimenParts.setModel(new SpecimenPartsTableModel(specimen.getSpecimenParts()));
 		
-		
 		//collectors - copy
-		specimen.getCollectors().clear();
+		/*specimen.getCollectors().clear();
 		Iterator<edu.harvard.mcz.imagecapture.data.Collector> iterc = previousSpecimen.getCollectors().iterator();
 		while(iterc.hasNext()){
 			specimen.getCollectors().add((edu.harvard.mcz.imagecapture.data.Collector)iterc.next());
 		}		
+		jTableCollectors.setModel(new CollectorTableModel(specimen.getCollectors()));*/
+		
+		specimen.getCollectors().clear();
+		Iterator<edu.harvard.mcz.imagecapture.data.Collector> iterc = previousSpecimen.getCollectors().iterator();
+		while(iterc.hasNext()){
+			Collector c = new Collector();
+			Collector c2 = iterc.next();
+			c.setCollectorId(c2.getCollectorId());
+			c.setCollectorName(c2.getCollectorName());
+			c.setSpecimen(specimen);
+			specimen.getCollectors().add(c);
+		}		
 		jTableCollectors.setModel(new CollectorTableModel(specimen.getCollectors()));
 
 		
-		//+collectors
+	
 		CollectorLifeCycle cls = new CollectorLifeCycle();
 		JComboBox jComboBoxCollector = new JComboBox(cls.getDistinctCollectors());
 		jComboBoxCollector.setEditable(true);
@@ -763,6 +806,8 @@ public class SpecimenDetailsViewPane extends JPanel {
 		
 		
 		setSpecimenPartsTableCellEditors();
+		
+		
 	}
 	
 	//do copy: family, subfamily, tribe, genus, species, subspecies, infra name, rank, author, nature of id, id date, id by 

@@ -85,6 +85,7 @@ public class ImageCaptureApp {
     public static final String APP_LIBRARIES = "Hibernate, Tesseract, ZXing, Log4J, drew.metadata.exif, iText, event_date_qc";
     public static final String APP_REV = "$Rev$";  // ImageCapture.jar file built before commit will be one revision behind latest commit with changes to this file. 
     public static Specimen lastEditedSpecimenCache=null;
+
     /** 
      * Use MCZEntBarcode class instead.
      *  
